@@ -1,0 +1,94 @@
+\chapter{O ADSP-21062}
+\label{ap:dsp}
+
+O ADSP-21062 SHARC (\eng{Super Harvard Architecture}) \cite{adsp} é um
+processador digital de sinais para números reais (``pontos-flutuantes") com
+32-bits de precisão, 2 megabits de memória SRAM \eng{on-chip} e suporte para
+periféricos integrados através de um barramento de entrada e saída (E/S)
+dedicado. Com seu \eng{cache} de instruções \eng{on-chip}, o processador pode
+executar cada instrução em somente 1 ciclo de seu \eng{clock}. Quatro
+barramentos internos independentes podem ser usados para o tráfego de
+variáveis, instruções ou E/S, permitindo operações em paralelo.
+
+O DSP também inclui outras características \eng{on-chip}, como interface para
+um sistema hospedeiro, um controlador DMA (\eng{Direct Memory Access}), portas
+seriais e portas específicas que podem ser usadas para estabelecer um ambiente
+de trabalho multi-processado, com vários DSP's da mesma família.
+
+A Figura~\ref{fig:sharc} ilustra a arquitetura SHARC do ADSP-21062:
+
+\begin{description}
+\item[Unidades de Computação] O processador de um ADSP-21062 contém 3 unidades
+de computação independentes: uma ULA (Unidade de Lógica Aritmética), um
+multiplicador com acumulador em ponto-fixo e um \eng{shifter}. As unidades
+podem processar dados em 3 formatos: ponto-fixo de 32-bits e ponto-flutuante de
+32 e 40 bits. As operações em ponto-fluante são compatíveis com o padrão IEEE;
+\item[Arquivo de Registradores de dados] é usado para a transferência de dados
+entre as unidades de computação e os barramentos de dados e para o
+armazenamento de resultados imediatos;
+\item[Geradores de Endereços e Seqüenciador] dois geradores de
+endereços dedicados (DAG 1 e 2) e o seqüenciador de programas fornecem
+endereços para acessos à memória. Juntos, permitem que operações computacionais
+sejam geradas com máxima eficiência já que as unidades de computação serão
+exclusivamente destinadas ao processamento de dados. Com seu \eng{cache} de
+instruções, o ADSP-21062 pode acessar uma instrução (do \eng{cache}) e dois
+operandos (da memória) em um único ciclo de seu \eng{clock}.;
+\item[Temporizador] Para a geração de interrupções;
+\item[Memória SRAM] O ADSP-21062 inclui 2 megabits de memória divididos em 2
+bancos, que podem ser configurados usando diferentes combinações para o
+armazenamento de código e dados. Cada banco de memória possui 2 portas,
+possibilitando o acesso paralelo dos dados pelas unidades de computação.
+\item[Porta para memória externa \eng{off-chip} e periféricos];
+\item[Porta para um sistema hospedeiro] Permitindo que o processador seja
+acoplado a um sistema hospedeiro através de um barramento padronizado (ISA),
+com o mínimo acréscimo de equipamento;
+\item[Interface para ambiente multi-processado] Oferecendo um
+ambiente com espaço de endereçamento unificado, permitindo um acesso direto a
+memória de outros nós de processamento em um ambiente simétrico (com
+processadores idênticos);
+\item[Controlador de DMA];
+\item[Portas seriais];
+\item[Porta de teste (JTAG)]
+\end{description}
+
+\begin{figure}
+\epsimage{0.80}{0 0 630 487,angle=90}{sharc-small}
+\caption[Diagrama de blocos do ADSP-21062 SHARC.]{Diagrama de blocos do
+ADSP-21062 SHARC. Extraído de \cite{adsp}.}
+\label{fig:sharc}
+\end{figure}
+
+\section{Desenvolvimento}
+
+Aplicações para o ADSP-21062 são desenvolvidas através um conjunto de
+ferramentas de desenvolvimento (compiladores de depuradores). Este conjunto de
+programas provêm ao desenvolvedor, a possibilidade de construir aplicações em
+assembly nativo ou C. Um emulador (EZ-ICE) permite a depuração da aplicação. A
+figura~\ref{fig:dsp-devel} mostra o processo de desenvolvimento de aplicações
+no ADSP-21062. Essa figura mostra que o processo é composto de 5 passos:
+
+\begin{enumerate}
+\item Descrição da arquitetura - onde o desenvolvedor definirá como operará o
+sistema, a configuração da memória, interrupções, etc;
+\item Codificação - onde escreve-se a aplicação em C ou Assembly nativo;
+\item Depuração \eng{off-line} - Este passo é opcional caso o desenvolvedor
+possua um simulador do DSP;
+\item Depuração \eng{on-line} - onde o desenvolvedor irá depurar a aplicação
+rodando no DSP, eliminando erros fatais, vazamentos de memória, etc.
+\item Manufaturação - onde a aplicação, já construída e depurada será compilada
+diretamente em memória ROM para ser acoplada a um sistema dedicado.
+\end{enumerate}
+
+\begin{figure}
+\epsimage{0.7}{0 0 593 391}{dsp-devel-small}
+\caption[Processo de desenvolvimento e projeto em um ADSP-21062.]{Processo de
+desenvolvimento e projeto em um ADSP-21062. Extraído de \cite{adsp}.}
+\label{fig:dsp-devel}
+\end{figure}
+
+%% \subsection{O Sistema Hospedeiro}
+
+%% A aplicação para o DSP, após o passo 3, poderá ser carregada diretamente no
+%% processador ou automaticamente, por intermédio de uma aplicação
+%% \emph{hospedeira}, que 
+

@@ -1,0 +1,379 @@
+\chapter{O Software de Referência}
+\label{chap:refsoft}
+\index{RefSoft}
+
+O segundo nível de filtragem do ATLAS é, de fato, um sistema bastante
+sofisticado. Há dois níveis de complexidade\index{L2!complexidade} que se pode
+destacar no projeto de tal sistema:
+
+\begin{description}
+\item[Complexidade dos algoritmos] as rotinas que o L2 tem que executar são
+bastante complexas, possuindo, normalmente muitos parâmetros de configuração, e
+executando algoritmos bastante sofisticados;
+
+\item[Complexidade de \eng{hardware}] os programas estarão sendo executados sob
+nós de computação interligados por uma rede. A gestão deste sistema é, por si,
+uma tarefa complexa. 
+\end{description}
+
+Os trabalhos de desenvolvimento de algoritmos são conduzidos pela colaboração
+que projeta o sistema de filtragem (ATRIG)\index{ATRIG}, enquanto que as
+plataformas de processamento recebem a atenção da colaboração do sistema de
+aquisição de dados (DAq)\index{DAq}. Embora correlatos, os dois trabalhos são
+normalmente desenvolvidos sob diferentes escopos. A cooperação ATRIG deseja
+otimizar os algoritmos de filtragem no aspecto físico e os membros do DAq
+desejam fazer a melhor escolha de \eng{hardware} para o ambiente.
+
+Esta descentralização tem que evoluir harmonicamente ao longo do
+desenvolvimento, pois, ao final, os algoritmos têm que rodar sobre alguma
+plataforma e devem ser ajustados para tal. Ademais, muitas plataformas estão
+disponíveis: como escolher a melhor? A solução para estes e para outros
+problemas está no \emph{Software de Referência} (RefSoft), que é detalhado
+neste capítulo.
+
+\section{O Refsoft e este trabalho} 
+
+No desenvolvimento de um sistema de discriminação que participe do projeto
+ATLAS deve-se considerar sua integração ao Software de Referência. Esta
+integração pode ser feita de forma fácil, caso o desenvolvedor conheça as
+limitações e facilidades do software. A atenção será focalizado, no entanto, nas
+restrições tecnológicas do Decisor Local, berço dos sistemas de discriminação
+de objetos no segundo nível de filtragem do ATLAS. Em específico, o sistema de
+discriminação de objetos relacionados ao calorímetro será detalhado, pois
+constitui a base para o discriminador neuronal desenvolvido.
+
+Esta parte do trabalho foi desenvolvida pelo autor no CERN
+\cite{ttn1,ttn8,ttn17,ttn20,ttn25}, considerando-se as restrições e
+características do Software de Referência e suas interfaces.
+
+\section{O que é o RefSoft?}
+\index{RefSoft!o que é?}
+
+O RefSoft é um conjunto de programas escritos em C/C++, que formam uma espécie
+de moldura de trabalho, onde é possível \textit{encaixar} os diversos
+componentes que devem operar no contexto do L2, ou seja, os equipamentos e as
+rotinas de filtragem \cite{ttn1,andre-enfpc99}.
+
+O RefSoft foi desenvolvido usando o paradigma da orienta\-ção a objetos (OO)
+\index{RefSoft!Orientação a Objetos} (veja o a\-pên\-dice~\ref{ap:oo})
+\cite{ttn8}. Desta forma, é possível idealizar os diversos componentes como
+peças de um grande sistema. Se, por exemplo, deseja-se substituir o componente
+``Sistema Operacional", é possível fazê-lo substituindo somente uma parte do
+RefSoft, i.e., aquela relacionada ao sistema operacional corrente, e
+re-compilar os programas. Esta flexibilidade resolve grandes problemas
+presentes no desenvolvimento do L2:
+
+\begin{enumerate}
+\item Permite a integração entre as colaborações ATRIG e DAq, pois os
+algoritmos agora podem ser desenvolvidos sobre o mesmo projeto, onde os testes
+de equipamento são realizados;
+\item Desenvolve uma forma justa de comparar algoritmos, plataformas e sistemas
+operacionais, criando um critério unificado de análise;
+\item Por ser desenvolvido com o enfoque \textit{re-usabilidade} e
+independência tecnológica, pois testes de algoritmos podem ser feitos sem
+alterar a estrutura de operação do software;
+\item Reduz a duplicação de esforços em áreas que são compartilhadas por todos
+os usuários;
+\item Permite a emulação de toda a funcionalidade do L2 em sistemas reduzidos,
+somente desenhados para testes específicos com diversos tipos de algoritmos.
+\end{enumerate}
+
+\section{Estrutura do RefSoft}
+\index{RefSoft!Estrutura}
+
+Para que os algoritmos sejam totalmente independentes da plataforma na qual são
+executados, objetos representativos do \eng{hardware} e do sistema operacional
+devem mascarar as diferenças entre as diversas possibilidades disponíveis.
+
+A melhor forma de conceber a organização do RefSoft é imaginá-lo como sendo um
+conjunto de objetos associados a camadas \index{RefSoft!organização em
+camadas}. Cada camada é responsável por uma funcionalidade. Os elementos de
+camadas superiores dependem dos elementos das camadas inferiores. As camadas
+inferiores isolam as superiores das diferenças operacionais de sistema para
+sistema. A Figura~\ref{fig:layers} mostra um diagrama em blocos representativo
+desta idéia. Na parte inferior encontra-se a camada mais básica, o
+\eng{hardware} e os sistemas de controle associados, ou seja, o sistema
+operacional (SO). Eles representam a escolha de sistema do usuário para
+\textit{rodar} o L2. Para tornar as camadas superiores, isto é, os sistemas de
+controle e algoritmos do L2 independentes (supervisor, decisores locais e
+globais, etc), deve-se mascarar todos os componentes da plataforma e do SO que
+são ali utilizados. Este mascaramento garante que os algoritmos e o controle do
+L2 jamais necessitem de mudanças no código, caso a plataforma ou sistema
+operacional com o qual estamos trabalhando sejam trocados. As setas à esquerda
+indicam o crescimento da abstração e complexidade do L2 (à extrema esquerda) e
+a dependência do \eng{hardware} (à direita).
+
+Por exemplo, desejando-se rodar o sistema em um ambiente Linux, a simples
+configuração e compilação sobre a nova plataforma deveria ser suficiente, sem
+ajustes nos algoritmos físicos e de controle do L2.
+
+\begin{figure}
+\epsimage{0.58}{0 0 580 236}{refsoft-layers}
+\caption{Diagrama esquemático da organização do RefSoft.}
+\label{fig:layers}
+\index{RefSoft!organização em camadas!diagrama}
+\end{figure}
+
+\section{O RefSoft e os decisores locais no L2}
+\index{RefSoft!decisor local}
+
+É cabível introduzir as diferentes nuances de implementação dos decisores
+locais no L2, pois trata-se da moldura deste trabalho. Os decisores locais,
+como foi visto no Capítulo~\ref{chap:l2}, são responsáveis por grande parte do
+processamento físico no L2. Mais especificamente, analisar-se-á decisores
+locais de objetos EM, usando os calorímetros do ATLAS, embora o modelo possa
+ser aplicado a qualquer decisor local no L2.
+
+É possível modelar a decisão local (elétron/jato, por exemplo) a partir dos
+seguintes passos (veja Figura~\ref{fig:OOA}) \cite{ttn8,ttn20}:
+
+\begin{figure}
+\epsimage{0.5}{0 0 658 446}{localdec-scheme}
+\caption{Uma análise gráfica da decisão local no L2.}
+\label{fig:OOA}
+\index{RefSoft!decisor local!OOA}
+\end{figure}
+
+\begin{enumerate}
+\item O supervisor do L2 recebe um evento para ser tratado;
+\item Um decisor local é alocado, pelo supervisor do L2, para processar uma
+RoI;
+\item O decisor local, que encontra-se em uma UL qualquer, faz o pedido dos
+dados a serem processados para uma RoI que foi indicada pelo supervisor. Neste
+caso, são transmitidos aos ROB's o centro da RoI, seu tamanho e um
+identificador do evento;
+\item O decisor local recebe tais dados e realiza o pré-processamento, como
+indicado na seção~\ref{sec:localproc};
+\item Realiza-se a discriminação e$^-$/jato do objeto;
+\item Realiza-se a extração de características do objeto, caso seja confirmado,
+e um sinal de controle é repassado ao supervisor;
+\item O supervisor aloca um decisor global para tratar o evento;
+\item Estas características são repassadas ao decisor global que, possivelmente
+recebendo dados sobre o mesmo e/ou outros objetos do evento, decide sobre a
+natureza do evento;
+\item O decisor local transmite o sinal de controle e, possivelmente, os dados
+de todos os objetos processados.
+\end{enumerate}
+
+O projeto OO pode ser extraído quase que diretamente desta análise e está
+descrito na Figura~\ref{fig:OOP}. As classes com letras em itálico são
+abstratas, suas funções são virtuais e apenas definem as interfaces de alguns
+algoritmos para o decisor local (\classe{Local Processor}). À direita, na parte
+superior da figura, é possível ver duas possíveis classes que representam
+implementações da classe abstrata \classe{Data Collector}. Na primeira hipótese
+(\classe{File Data Collector}), os dados são recolhidos de um arquivo, trata-se
+portanto de uma simulação. Na segunda hipótese no entanto, recolhem-se os dados
+diretamente de um ROB. Para o decisor local, o processo é indiferente. O
+pré-processamento de dados ocorrerá neste coletor de dados.
+
+Após receber os dados, o decisor local deverá discriminar o objeto e extrair
+suas características usando instâncias de implementação de classes herdeiras
+de \texttt{Discrimination Processor} e \texttt{FEx Processor} (parte inferior
+do diagrama). Após o processamento e confirmação da RoI, o decisor global
+(\classe{Global Processor}) poderá requerer os dados do objeto analisado. O
+decisor local deve então repassá-los à instância apropriada desta classe. As
+Implementações~\ref{imp:localdec1}, \ref{imp:localdec2} e \ref{imp:localdec3}
+mostram como é possível sintetizar a transparência de operação requerida no
+projeto usando-se C++.
+
+\begin{figure}
+\epsimage{0.475}{0 0 718 403}{localdec-oop}
+\caption{O projeto OO extraído a partir da Figura~\ref{fig:OOA}. Repare que
+aqui o supervisor não é modelado. O esquema segue a UML.}
+\label{fig:OOP}
+\index{RefSoft!decisor local!OOP}
+\end{figure}
+
+\begin{algorithm}
+\caption{O Coletor de Dados (\classe{Data Collector}).}
+\label{imp:localdec1}
+\index{RefSoft!coletor de dados}
+\begin{codigo}
+// O coletor de dados é um modelo para a definição da interface
+\kword{template} <\kword{class} DATA, \kword{class} ROISPEC>
+\kword{class} DataCollector \{
+\kword{public}:
+    \kword{virtual} DATA* collect (\kword{const} ROISPEC*) {\color{vermelho}{= 0}};
+    \dots
+\};
+
+// Os tipos que definirão os dados de nossa classe abstrata.
+\kword{typedef} \kword{Vector}<Cell> Cluster;
+\kword{typedef} \kword{struct} CRS \{
+    \kword{float} eta;
+    \kword{float} phi;
+    \kword{float} etaSize;
+    \kword{float} phiSize;
+    \kword{long} \kword{int} eventNo;
+\} CaloRoISpec;
+
+// Define-se a interface que irá coletar os dados 
+// automaticamente junto a sua implementação. Entre "<" e ">"
+// defini-se as classes que serão utilizadas pelo modelo na
+// criação desta nova classe. A primeira classe define o tipo
+// que será retornado pela rotina \textit{collect()}, o segundo,
+// o tipo que define a especificação da RoI.
+\kword{class} CaloFileDataCollector : 
+  \kword{public} \kword{class} DataCollector<Cluster, CaloRoISpec> \{
+\kword{public}:
+    CaloFileDataCollector(const String*);
+    \kword{virtual} Cluster* collect (\kword{const} CaloRoISpec*);
+    \dots
+\kword{private}:
+    stream* _sp;
+    \dots
+\};
+
+// Deve-se implementar a função \textit{collect()}
+Cluster* CaloFileDataCollector::collect (\kword{const} CaloRoISpec*) \{
+    // Aqui, descreve-se como coletar dados de arquivos.
+    \dots
+\};
+\end{codigo}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Os algoritmos de discriminação e extração de características.}
+\label{imp:localdec2}
+\index{RefSoft!discriminador}
+\index{RefSoft!extrator de características}
+\begin{codigo}
+// Os algoritmos podem ser definidos da maneira semelhante ao
+// \textit{DataCollector} usando-se do artifício de modelos 
+// (\textit{template}) descrito anteriormente.
+\kword{template} <\kword{class} DATAIN>
+\kword{class} Discriminator \{
+\kword{public}:
+    \kword{virtual} bool confirm (\kword{const} DATAIN*) {\color{vermelho}{= 0}};
+    \dots
+\};
+
+\kword{template} <\kword{class} DATAIN, \kword{class} DATAOUT>
+\kword{class} FEx \{
+\kword{public}:
+    \kword{virtual} DATAOUT* extract (\kword{const} DATAIN*) {\color{vermelho}{= 0}};
+    \dots
+\};
+
+// As quantidades que serão retornadas pelo FEx.
+\kword{typedef} \kword{struct} EMObject \{
+    \kword{float} Et;
+    \kword{float} Isolation;
+    \dots
+\} EMObject;
+
+\kword{class} MyEMDiscriminator : \kword{public} Discriminator<Cluster> \{
+    // Aqui a função \textit{confirm} será declarada.
+    // Sua implementação poderá vir depois
+    \dots
+\};
+
+\kword{class} MyFEx : \kword{public} FEx<Cluster, EMObject> \{
+    // Aqui a função \textit{extract} será declarada.
+    // Sua implementação poderá vir depois
+    \dots
+\};
+\end{codigo}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{O decisor local (\texttt{CaloEMLocalProcessor}).}
+\label{imp:localdec3}
+\index{RefSoft!decisor local!implementação}
+\begin{codigo}
+// Por fim, define-se o decisor local agregando 
+// os algoritmos e o coletor de dados. Ao instanciar
+// estas classes, cria-se objetos que representam os 
+// blocos do diagrama mostrado:
+\kword{class} CaloEMLocalProcessor \{
+\kword{public}:
+    CaloEMLocalProcessor(DataCollector<Cluster, CaloRoISpec>&,
+                         FEx<Cluster, EMObject>&,
+                         Discriminator<Cluster>&);
+    EMObject* run (\kword{const} CaloRoISpec*);
+    \dots
+\kword{private}:
+    DataCollector<Cluster, CaloRoISpec> _collector;
+    MyEMFEx _fex;
+    MyEMDiscriminator _discriminator;
+    \dots
+\};
+
+// A Implementação de \textit{run()} fica simples:
+EMObject* CaloEMLocalProcessor::run (const CaloRoISpec* spec) \{
+    EMData* data = this->_collector.collect(spec);
+    
+    \kword{if} ( this->_discriminator.confirm() ) 
+        \kword{return} this->_fex.extract(data);
+    \kword{else}
+        \kword{return} {\color{vermelho}{0}};
+\}
+
+// Durante o programa, é possível criar um decisor local
+// e operá-lo!
+    CaloFileDataCollector collector;
+    MyEMDiscriminator discriminator;
+    MyEMFEx fex;
+    CaloEMLocalProcessor* local = \kword{new} CaloEMLocalProcessor(
+	                              collector, discriminator, fex);
+    \dots
+\end{codigo}
+\end{algorithm}
+
+Nesta visão resumida da implementação, inicialmente, demonstrou-se um dos
+grandes trunfos de C++\index{C++!RefSoft}: a criação de modelos de
+classes. Modelos (do inglês, \eng{templates}) são usados nas muitas definições
+de classes do L2. Nas implementações~\ref{imp:localdec1} e \ref{imp:localdec2},
+é possível ver modelos definindo um padrão de comportamento para coletores de
+dados, discriminadores . Os argumentos do modelo são utilizados para criar a
+definição final da classe que será instanciada ou referenciada. Na
+implementação~\ref{imp:localdec1}, o primeiro argumento identifica a classe de
+dados que será retornada por uma instância de uma classe deste modelo, enquanto
+que o segundo, o tipo de especificação. No L2 ambos parâmetros variam de
+decisor local para decisor local.
+
+A classe criada, finalmente, tem definida sua interface para a coleção de
+dados. Imagina-se aqui que o sistema irá simular o L2 usando arquivos de
+entrada com os dados que hipoteticamente viriam dos ROBs. Prossegue-se com esta
+filosofia de implementação usando modelos, e definir discriminadores e
+extratores de características como foi visto na
+Implementação~\ref{imp:localdec2}. Somente parte da definição das classes que
+serão realmente implementadas está mostrada.
+
+Por final, define-se o decisor local (\texttt{CaloEMLocalProcessor}). A
+implementação da função \texttt{run()} é mostrada por último. Repare a
+simplicidade como é conduzida a requisição de dados, discriminação e extração
+de características. Por utilizar ponteiros para classes mais genéricas, para o
+decisor local não é importante saber que algoritmos está usando.
+
+De fato, o decisor local não faz parte dos algoritmos de discriminação e
+extração de características no topo da pilha da Figura~\ref{fig:layers}. É um
+dos sistemas de controle do L2. Os algoritmos \textbf{são} elementos do topo
+daquela pilha no entanto. 
+
+Levando-se em consideração que C é um sub-conjunto da linguagem C++, estes
+algoritmos podem ser implementados de forma estruturada ou orientada o objetos,
+como está colocado no apêndice~\ref{ap:oo}. Além disso, seu desenvolvimento pode
+ser feito de forma quase que independente do L2. Os únicos laços definidos são
+as interfaces com decisor local.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,220 @@
+\chapter{Orientação a Objetos e as Linguagens C e C++}
+\label{ap:oo}
+\index{Orientação o Objetos|see{OO}}
+\index{OO}
+
+Não há, sem dúvida, uma melhor forma de desenvolver soluções para
+\textbf{todos} os problemas que podem ser resolvidos com programação. Há
+problemas que possuem ótimas soluções estruturadas ou orientadas a texto. Ainda
+assim, existe um grande número de problemas que podem ser resolvidos
+analisando-se a forma com que alguns elementos deste problema interagem. Este
+tipo de análise extrai os ``objetos"\ do problema, e é comumente chamada de
+análise orientada a objetos ou OOA\index{OO!análise}.
+
+Após a OOA, desenvolve-se um projeto que respeite o conjunto de objetos
+encontrados e suas interações. Nesta fase, possivelmente, elementos abstratos
+para suprir carências do projeto podem ser criados. Esta fase é chamada de
+projeto orientado a objetos ou OOP\index{OO!projeto}. Na OOP deseja-se resolver
+o problema através da interação de objetos existentes na OOA com novos e
+abstratos elementos.
+
+\section{OO $\times$ Estruturação}
+\index{OO!versus estruturação}
+
+O leitor pode estar se perguntando neste momento: ``Quando o \textit{programa}
+surgirá?". A diferença marcante entre projetos OO e os antigos projetos
+estruturados baseados em linguagens como Pascal, Fortran ou o próprio C, é que
+não deve se programar nada antes do entendimento do problema ser \textit{o
+mais completo possível}. Não é possível escrever código eficientemente sem que
+se conheça boa parte dos objetos que interagem no sistema. Isto pode levar a
+resultados bastante desastrosos \cite{booch:oo}. 
+
+Não se está dizendo aqui que a programação estruturada deve ser feita de forma
+mal planejada!  Frisa-se apenas que um mal planejamento num projeto OO
+pode levar a piores resultados que usando outras formas de programação.
+
+\index{estruturação!paradigma}
+Quando deseja-se resolver problemas usando o paradigma da estruturação (de
+funções), deseja-se decompor o problema original em pequenos blocos que possuem
+um única finalidade e são facilmente programáveis. Estes pequenos blocos,
+quando invocados pelo programa principal ou por outros blocos interagem
+resolvendo o problema original. Neste caso, a análise do problema deve ser
+feita tomando-se por base a funcionalidade de seus componentes. Ou
+seja, deve-se deixar o espaço original de informação (ou seja os componentes) e
+criar um espaço-solução, composto agora de várias funções. Invariavelmente as
+soluções para um mesmo problema variam de analista para analista.
+
+\index{OO!paradigma} Quando analisa-se um problema usando-se técnicas OO
+matém-se no espaço original do problema, somente extraindo os componentes mais
+evidentes e que mais se iteragem dentro deste. Invariavelmente, os objetos
+extraídos são os mesmos de analista para analista. Isto não é um espanto, pois
+a sensatez impede-nos de extrair objetos que não existam no escopo do
+problema. Abaixo estão anexados vários trechos de um monólogo hipotético de uma
+dona de restaurante que deseja integrar por computador vários aspectos de seu
+restaurante. No monólogo, a senhora descreve como funciona seu restaurante. Os
+objetos estão sublinhados. Veja como é fácil identificá-los:
+
+\begin{quotation}
+... os \underline{clientes} podem chegar ao \underline{restaurante} diretamente
+ou reservar uma \underline{mesa} com nosso serviço de reservas. Caso optem por
+reservar uma mesa, devem notificar a hora de chegada e o número de
+\underline{pessoas} que serão servidas durante a \underline{refeição}. O número
+de telefone do cliente que reserva a mesa também é anotado.  
+
+... os \underline{garçons} anotam os pedidos dos clientes e os levam até a
+\underline{cozinha}. Os \underline{cozinheiros} devem atender o
+\underline{pedido}. Caso falte algum \underline{item} pedido o cozinheiro deve
+informar imediatamente à \underline{gerência}, para que providencie o item nas
+próximas \underline{compras}.
+\end{quotation}
+
+Durante uma análise mais depurada ou na fase de projeto, muitos dos objetos
+destacados podem se revelar inúteis. Neste caso, estes elementos são eliminados
+da solução do problema. É importante notar, entretanto, que provavelmente você
+teria destacado o mesmo conjunto de objetos que foram marcados ali. Por causa
+disto, o entendimento e a manutenção de sistemas OO é bem mais fácil, pois é
+natural.
+
+Em contrapartida, analisando-se o problema para resolvê-lo usando-se a
+estruturação de funções muitas das funções poderiam ter nomes estranhos, além
+de acumular a funcionalidade de outras partes, tornando o simples entendimento
+e a re-utilização de software quase impossível.
+
+\section{Relacionamento de objetos}
+
+Objetos são basicamente caracterizados pelas suas qualidades. Por exemplo, um
+garçom tem um salário, uma freqüência e é responsável por um número de
+mesas. Os objetos podem ser relacionar de várias formas\index{OO!relacionamento
+de objetos}:
+
+\begin{itemize}
+\item Possuindo outros objetos, como características próprias, por exemplo: a
+cozinha possui fogões;
+\item Cooperando com outros objetos, por exemplo: o garçom atende ao cliente;
+\item Sendo um ``herdeiro" de algum tipo de objeto. Por exemplo: um cozinheiro
+e um garçom são funcionários. Um funcionário possui salário, logo um cozinheiro
+e um garçom também têm salário.
+\item etc.
+\end{itemize}
+
+A forma com que os objetos se relacionam implementa a solucão de determinados
+problemas. Há, no entanto, formas comuns de relacionamento entre objetos que
+podem ser facilmente adaptadas a uma vária gama de problemas \cite{design:oo}.
+
+Suponha, por exemplo, que deseja-se organizar várias palavras (ou seja, um
+dicionário) em diversos formatos, utilizando, portanto, diversos algoritmos
+diferentes. O diagrama da figura~\ref{fig:oo-diag1} exemplifica uma solução
+bastante comum. Neste diagrama é possível ver os objetos representados segundo a
+UML (do inglês \eng{Universal Modelling Language}), uma linguagem de
+diagramação para projetos orientados a objetos. O objeto \texttt{Dictionary}
+possui um conjunto de palavras como seus atributos. Eventualmente, o usuário do
+\texttt{Dictionary} poderá querer organizá-lo usando ordenação alfabética ou
+pelo tamanho das palavras. Para que isto seja indiferente a este objeto,
+encapsula-se o algoritmo em uma classe que define sua interface:
+\texttt{Organizer}. Esta classe, não existe pois é uma classe abstrata. Uma
+classe abstrata não tem implementação, ela somente define um padrão de
+comportamento, ou seja, uma \textit{interface} para suas herdeiras.
+
+\begin{figure}
+\epsimage{0.85}{0 0 399 251}{OO-compositor}
+\caption{Diagrama do ``Ordenador", uma técnica de projeto OO que permite que
+algoritmos sejam mudados em um objeto, sem alterá-lo.}
+\label{fig:oo-diag1}
+\end{figure}
+
+\section{Implementação e C++}
+
+Durante o projeto, deve-se escolher uma linguagem de implementação. Este
+\textit{dialeto} de programação deverá conter elementos que tornem o projeto OO
+simples de ser implementado. Linguagens de programação que possuem tais
+elementos são chamadas ``orientadas a objetos", pois permitem que o paradigma
+de programação adotado seja codificado diretamente, ou seja, não implique no
+desenvolvimento de soluções de implementação personalizadas. 
+
+A título de exemplo, ver-se-á como a implementação das classes
+\texttt{Dictionary} e \texttt{Organizer} serão conduzidas em C++. Esta
+linguagem é uma derivativa do C, criado em 1978 por Dennis~M.~Richie
+\cite{kr:ansi-c,bs:cpp}. C++ contém diretivas que permitem a simples
+programação de sistemas OO.
+
+Em C++, a definição dos objetos destacados acima transformam-se em classes. Ao
+\emph{instanciar} uma classe, cria-se um objeto daquele tipo. \emph{Instanciar}
+significa declarar uma variável, exatamente da mesma forma que é feito em C. Na
+implementação~\ref{imp:strategy} encontra-se o trecho de programa em C++ que
+implementa as classes descritas acima e sua interação.
+
+\begin{algorithm}
+\caption{As classes \texttt{Dictionary} e \texttt{Organizer}}
+\label{imp:strategy}
+\begin{codigo}
+// Define-se, inicialmente, a classe abstrata \textit{Organizer}
+// O termo "= 0" no final da declaração garante que não há
+// implementação para esta função aqui.
+\kword{class} Organizer \{
+\kword{public}:
+    // Define-se a \textit{interface} da função que ordena as palavras
+    virtual void Organize(\kword{vector}<\kword{String}>*) {\color{vermelho}{= 0}};
+\kword{protected}:
+    Compositor();
+\};
+
+// Como escrever a classe \textit{Dictionary}
+\kword{class} Dictionary \{
+\kword{public}:
+    Dictonary(Organizer*); // cria nova instância do dicionário
+    \kword{void} Sort(); // re-organiza o dicionário
+\kword{private}:
+    Organizer* _organizer;
+    \kword{vector}<\kword{String}> _words;
+    \dots;
+\};
+
+// Agora é possível definir vá\-rios tipos de algoritmos de ordena\-ção,
+// herdando da classe \textit{Organizer} a interface.
+\kword{class} AlphaOrganizer : public Organizer \{
+\kword{public}:
+    AlphaOrganizer();
+    \kword{virtual} \kword{void} Organize(\kword{vector}<\kword{String}>*);
+    \dots
+\kword{private}:
+    // Posso colocar aqui, os atributos que achar
+    // necessário para realizar a organização das palavras
+    \dots
+\};
+
+// Implementação da função
+\kword{void} AlphaOrganizer::Organize(\kword{vector}<\kword{String}>* words)
+\{ // O que precisor fazer para organizar as palavras \dots \}
+
+// É possível, agora, durante o programa, ter uma declaração
+// do seguinte tipo:
+Dictionary* dict = \kword{new} Dictionary( \kword{new} AlphaOrganizer() );
+
+// O conjunto de palavras será organizado de acordo com o
+// algoritmo selecionado na inicialização:
+dict->sort();
+\end{codigo}
+\end{algorithm}
+
+Nesta implementação, as palavras-chave em C++ estão
+\underline{sublinhadas}. Inicialmente implementou-se a classe abstrata
+\texttt{Organizer}, que na verdade somente contém a definição da interface, o
+que fica determinado ao acrescentar o trecho ``\texttt{= 0}" na declaração de
+seu único método. A implementação somente ocorrerá em classes derivadas
+daquela, como em \texttt{AlphaOrganizer}. A função que \emph{constrói} objetos
+da classe \texttt{Dictionary} recebe como parâmetro um ponteiro para objetos do
+tipo \texttt{Organizer}. Desta forma, é possível inicializar nosso dicionário
+com qualquer tipo de ordenador de palavras. Veja que também é possível
+\emph{trocar} o ordenador de palavras dinamicamente, já que se trata apenas de
+um ponteiro.
+
+A implementação, em cada herdeiro da classe \texttt{Organizer} deverá ser
+conduzida, como indicado no final deste trecho de código. Como C é um
+sub-conjunto de C++, i.e., os comandos de C também são interpretáveis por um
+compilador C++, a implementação do algoritmo em si pode ser conduzida
+utilizando-se tanto uma análise estruturada, quanto orientada a objetos. Esta
+escolha fica ao encargo do programador.
+
+
+
+

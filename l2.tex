@@ -1,0 +1,523 @@
+\chapter{O Segundo Nível de Filtragem do ATLAS}
+\label{chap:l2}
+\index{Segundo Nível|see{L2}}
+\index{L2}
+
+Este trabalho desenvolve técnicas de processamento para o segundo nível de
+filtragem (L2). Neste nível é feita a primeira análise do evento tendo em vista
+suas características globais \cite{l2tpr}. Ainda assim, tal análise é chamada
+de análise local. O processamento é assim designado pois leva em conta somente
+áreas destacadas pelo primeiro nível de filtragem no detetor.
+
+\index{L2!taxa de entrada} Espera-se que o L2 seja capaz de reduzir sua taxa de
+entrada de 100 kHz para não mais que 1 kHz na saída para o Filtro de Eventos
+(EF). Esta é, sem dúvida, uma restrição muito genérica, levando-se em
+consideração a diversidade de operações que este nível de filtragem deve
+realizar. Alguns algoritmos serão mais velozes que outros, e portanto, alguns
+canais\footnote{Um canal representa uma ``assinatura de Higgs", seguindo as
+restrições para os objetos daquela assinatura, num determinado nível de
+filtragem.} tenderão a ser processados de forma mais eficiente que outros. Como
+então garantir que o sistema todo funcionará na taxa de eventos esperada? Basta
+garantir que nenhum dos canais seja processado num intervalo de tempo maior do
+que a taxa de primeiro nível para aquele canal. Assim sendo, se espera que dos
+100 kHz de entrada do primeiro nível, 10\% representem o mesmo tipo de
+decaimento, o que indica que o tempo de processamento para este canal no
+segundo nível não poderá ser maior que $\frac{10}{100 \text{kHz}} = 100
+\mu\text{s}$.
+
+Neste caso, é possível imaginar o segundo nível como um conjunto de ``tubos"\ 
+(\eng{pipes}). Cada ``tubo"\ é responsável pelo processamento de um
+canal. Eventos de um canal chegam ao L2, segundo uma taxa determinada pelo
+primeiro nível de filtragem. É claro que esta taxa é um valor estatisticamente
+tomado, então uma margem de segurança pode ser aplicada tanto na taxa dos
+canais de entrada do L2 (aumentar) ou no tempo de processamento para cada canal
+(reduzir). Um sistema ``supervisor"\ é o responsável por receber os dados do
+L1 e repassá-los ao ``tubo"\ respectivo. 
+
+É claro que a idéia dos ``tubos"\ é apenas representativa do conceito de
+processamento orientado à taxa de eventos de cada canal do experimento
+ATLAS. Realisticamente, gostaría-se de possuir um sistema mais complexo que
+pudesse se configurar sob-demanda, ou seja, houvesse uma distribuição da carga
+de trabalho no L2 de tal forma que os ``tubos"\ se re-dimensionassem em
+intervalos de tempo, conforme o número de eventos de cada canal naquele
+intervalo. Neste caso, o tempo de processamento seria limitado pelo sistema
+supervisor do L2, e dependeria do número de eventos de cada canal.
+
+\section{Recursos $\times$ tempo de processamento no L2}
+\label{sec:l2-time}
+\index{L2!tempo de processamento}
+
+O tempo de processamento de cada canal não é um fator somente de sua taxa de
+entrada associada. Há também o poder de processamento associado a cada
+canal. Isto quer dizer que o mesmo fluxo de eventos pode ser tratado por mais
+de um processador, mais rápido ou reciprocamente, um maior fluxo de eventos
+pode ser tratado por mais processadores no mesmo espaço de tempo
+anterior. Neste caso, é possível dizer que o número de processadores associados a
+cada canal, depende da carga de cada canal, ou da dificuldade de
+processá-lo. Canais mais complexos podem ter mais processadores a eles
+disponibilizados, e canais mais simples, menos.
+
+A Figura~\ref{fig:proctime} mostra um gráfico que explora este conceito,
+tomando por base, a taxa de eventos de entrada no L2. Suponha que só exista um
+canal de entrada para o L2, e portanto somente um tipo de assinatura a ser
+identificada. Neste caso, todos os processadores (e também a rede que os
+interliga) no L2 estariam dedicados ao processamento de cada evento de
+entrada. Se a taxa de ocupação\footnote{A \emph{taxa} de ocupação mede o
+percentual do recurso que está sendo utilizado. Portanto, uma \emph{taxa de
+ocupação} de 0,5 ou 50\% quer dizer que o recurso está com 50\% de sua
+capacidade de processamento aproveitada.} da rede e dos processadores fosse de
+100\%, o número de processadores para cada evento está na abcissa do gráfico da
+Figura~\ref{fig:proctime}, tomando por base a linha cheia. Isto, de fato, é
+impossível. Uma taxa de ocupação, tanto para a rede quanto para os
+processadores de 100\% é no mínimo impraticável. Valores mais realísticos
+apontam para a segunda (traço-e-ponto) ou para a terceira reta (tracejada), que
+estão abaixo desta primeira. Na segunda hipótese, a ocupação da rede e dos
+processadores seria de 90\%. Já no caso da terceira a ocupação da rede seria de
+50\%, enquanto que dos processadores, de 80\%. É claro que estes valores
+hipotéticos representam médias.
+
+\begin{figure}
+\epsimage{0.7}{64 201 554 600}{l2time}
+\caption{Ocupação da rede e dos processadores do L2 contra o tempo necessário
+de processamento para cada evento.}
+\label{fig:proctime}
+\end{figure}
+
+Então, para calcular-se o tempo de processamento de cada evento no L2,
+é necessário levar em consideração a taxa de ocupação\index{L2!taxa de ocupação}
+de seus recursos. Não é, no entanto, difícil de ver que o número de
+processadores estará na casa dos milhares. Atualmente estima-se que, em média,
+10 ms serão necessários para cada evento no L2 \cite{l2tpr}. Isto quer dizer:
+1000 processadores para a primeira curva, em torno de 1200 para a segunda e
+2500 para a terceira (!), considerando-se as taxas de ocupação mostradas na
+Figura~\ref{fig:proctime}.
+
+\section{Organização Lógica do L2}
+\index{L2!organização lógica}
+
+Não é uma atividade simples controlar milhares de processadores operando
+simultaneamente. Por exemplo, as chances de um processador falhar aumentam
+muito com o número de processadores envolvidos no sistema. Sendo assim, é
+necessário que se crie um sistema redundante e capaz de distribuir o trabalho
+sob-demanda, como mencionado anteriormente.
+
+\paragraph{A Rede} \index{L2!rede} O primeiro problema de projeto a ser
+resolvido, no entanto, é a rede. Sua ocupação está seriamente comprometida
+necessitando-se conectar tantos processadores. Uma solução é utilizar sistemas
+de processamento simétrico (\eng{Symetric Multi-Processing}, ou SMP)\index{SMP}
+\index{Processamento Simétrico|see{SMP}}. Nestes sistemas, muitas CPUs
+idênticas têm acesso ao mesmo conteúdo de memória, e de fato, pertecem ao mesmo
+nó de computação. Muitos sistemas operacionais, dentre eles Linux e Windows NT
+suportam este tipo de arquitetura. Muitos fabricantes já possuem versões
+multi-processadas de suas CPUs.
+
+Adotando-se SMPs seria possível ter nós de processamento com muitos
+processadores. Assim sendo, alguns nós corresponderiam a uma unidade lógica
+(UL)\index{Unidade Lógica|see{L2, UL}} \index{L2!UL} de processamento. Desta
+forma, se reduziria e otimizaria o uso da rede para acesso a outros nós. Ainda,
+a comunicação entre processadores do mesmo nó também seria ótima, pois se daria
+através da memória compartilhada. A distribuição da carga em cada processador
+dos nós é feita pelo sistema operacional, e os programadores não têm que se
+preocupar com isto. Correlacionando com nosso exemplo anterior usando ``tubos",
+uma UL seria equivalente a um ``tubo".
+
+Existem 3 tipos de ULs no L2: \index{L2!UL!tipos}
+
+\begin{itemize}
+\item \textbf{Decisor Local:} \index{L2!decisor local} Os decisores locais são
+as unidades responsáveis por confirmar os objetos selecionados pelo L1. Eles
+podem ser divididos, dependendo da estratégia de processamento adotada em:
+\begin{itemize}
+\item \textbf{Unidade de Pré-processamento:} Esta unidade é responsável por
+extrair dos ROB's os dados ne\-ces\-sá\-ri\-os para a confirmação da RoI
+destacada pelo L1. Os dados são pré-analisados e organizados nesta unidade;
+\item \textbf{Discriminador Local:} Nesta unidade ocorre a confirmação do
+objeto destacado pelo L1. O discriminador local pode empregar qualquer método
+de identificação de objetos;
+\item \textbf{Extrator de Características:} Nesta unidade ocorre a extração de
+características do objeto, por exemplo, seu momento transverso, energia,
+isolamento, etc.
+\end{itemize}
+
+Existem decisores locais para os vários tipos de objetos locais e globais que
+podem ser indicados pelo L1;
+
+\item \textbf{Decisor Global:} \index{L2!decisor global} Os decisores globais reúnem os dados de todos os
+decisores locais para um evento, comparando seus objetos contra uma tabela de
+assinaturas que representem a física que se deseja observar. Hipoteticamente,
+qualquer conjunto de objetos poderia ser configurado, permitindo altíssima
+flexibilidade na escolha do ``cardápio" de um determinado teste;
+
+\item \textbf{Supervisor:} \index{L2!supervisor} Os supervisores são os agentes
+que se comunicam com o L1 e o EF. Eles recebem os dados do L1, e ordenam
+atividades às UL's no L2. Após receber o aval do decisor global sobre um
+evento, o supervisor decide, dependendo de outras variáveis, se aceitará ou
+rejeitará o evento, repassando-o ao EF.
+\end{itemize}
+
+A Figura~\ref{fig:l2-sketch} mostra um esquema simplificado da interconexão
+entre as ULs do L2 \index{L2!UL!interconexões}. Na parte superior-direita da
+figura é possível observar o detetor ATLAS, em escala. Conectado diretamente ao
+ATLAS, encontra-se o L1 e os ROB's. O L1 pré-filtra os dados gerados no ATLAS,
+dando o sinal de controle para o armazenamento dos dados nos ROBs, caso o
+evento seja aceito naquele nível de filtragem. O L1 então comunica-se com o L2,
+repassando os dados colhidos. O L2, através de seu supervisor, ativa suas UL's,
+gerando uma decisão sobre o evento observado. Se a decisão de manter o evento
+for aceita, o L2 recolhe os dados do evento e repassa-os, todos, ao EF. A
+legenda na parte inferior-esquerda do gráfico define os elementos existentes no
+L2.
+
+\begin{figure}
+\begin{center}
+\includegraphics[type=eps,ext=.eps,bb=0 0 744 598,angle=90,scale=0.57]{figures/L2-sketch}
+\end{center}
+\caption{Esquema simplificado de processamento no L2.}
+\label{fig:l2-sketch}
+\index{L2!esquema}
+\end{figure}
+
+\section{Estruturas e Fluxo de Dados no L2}
+\index{L2!estrutura de dados}
+\index{L2!fluxo de dados}
+
+Até agora, introduziu-se os diversos aspectos da organização lógica do
+L2. Nesta seção, focalizar-se-á a atenção dos dados que trafegarão por esta
+estrutura lógica. A Figura~\ref{fig:l2-sketch} pode ser usada como referência.
+
+Quando um evento é aprovado pelo L1, é ``empacotado" numa estrutura que contém
+elementos de controle, as coordenadas do centro de cada objeto local (centro da
+RoI) e as características de isolamento, energia, etc, de cada objeto local e
+global que foi definido. Os dados dos detetores são gravados nos ROBs, de forma
+que níveis subsequentes de processamento possam utilizá-los.
+
+O L1, então, sinalizará ao supervisor do L2 que há um evento aprovado,
+descarregando os dados nesta UL. Ao receber a informação, o supervisor irá
+assinalar um ou mais decisores locais para confirmar a filtragem do L1. Estes
+decisores produzirão um conjunto de características daquele objeto e o
+avaliarão. Após esta etapa, o supervisor do L2 é novamente acionado, designando
+unidades de decisão global para colher os dados dos diversos decisores locais e
+avaliar o evento como um todo. Os dados que são repassados ao decisor global
+são valores mais acurados de isolamento, energia transversa e momento dentre
+outros. Essas quantidades que descrevem o objeto e são denominadas
+\emph{características} do objeto (\eng{features}), e representam a física do
+elemento sob análise.
+
+Os decisores globais comparam os objetos e suas características com um conjunto
+de assinaturas que representam a física de interesse. Independente de casarem
+ou não com as assinaturas, o decisor global repassará os dados de sua operação
+para o supervisor, onde a decisão final de aceitar ou rejeitar o evento será
+tomada.
+
+O supervisor do segundo nível receberá o aval do decisor global designado para
+aquele evento. Dependendo dos limites operacionais configurados, ele poderá
+aceitar o evento ou rejeitá-lo. Caso aceite o evento, o supervisor deverá
+reunir \textbf{todos} os dados que foram extraídos do evento, seus objetos
+locais e globais, a assinatura com o qual o evento \emph{casou}, os valores de
+controle do evento, etc. Estes dados devem ser encaminhados ao EF.
+
+O tempo 10 ms discutido na Seção~\ref{sec:l2-time}, representa o intervalo de
+tempo que o L2 terá para executar todos os passos descritos aqui. Isto inclui
+tempos de comunicação entre processos e processadores, de execução de
+algoritmos e, obviamente, de quaisquer outras atividades que devam ser
+conduzidas pelo L2.
+
+\section{Os Decisores Locais}
+
+As unidades de decisão local são, sem dúvida, o maior gargalo, em termos de
+tempo de processamento, no L2. Ou seja, de todas as atividades desempenhadas
+pelo L2, as unidades de decisão local representam a maior quota de tempo de
+processamento. Isto é evidente analisando-se a estrutura do L2: o supervisor é
+tão somente uma unidade de organização do trabalho e os decisores globais,
+unidades de consulta de um banco de dados, i.e., a tabela com as assinaturas da
+física de interesse.
+
+Os algoritmos de reconhecimento e extração de características no L2 devem
+analisar os dados de cada RoI, de tal forma a avaliar da melhor maneira os
+objetos que interagiram naquela porção do detetor. Este trabalho pode ser
+bastante difícil, já que, em muitos casos \cite{l2tpr}, não é evidente que um
+objeto seja confirmado baseando-se somente nos dados de um detetor. Estes
+objetos necessitam muitas vezes de extrapolações de seus traços nos detetores
+internos para a confirmação de valores de momento ou da identificação de uma
+possível multiplicidade\footnote{Pode acontecer que um objeto destacado pelo L1
+venha ser, na verdade, a ocorrência de 2 ou mais objetos muito próximos. O L2
+deve esclarecer tais casos.}.
+
+Por outro lado, devido aos requisitos de tempo, seria importante uma
+discriminação eficiente através dos algoritmos de decisão local, pois:
+
+\begin{itemize}
+\item Quanto mais eficientes são os algoritmos de confirmação de objetos,
+baseados em dados dos calorímetros e do detetor de múons, menor a quantidade de
+dados que são transferidos dos ROBs para o L2;
+
+\item Quanto mais eficientes os algoritmos, menor o tempo de processamento de
+cada objeto;
+\end{itemize}
+
+Independentemente da eficiência dos algoritmos, uma estratégia de processamento
+deve ser escolhida. A mais eficiente, como já colocado na
+Seção~\ref{sec:l2-basics}, é a confirmação inicial dos objetos nos
+processadores locais, usando-se somente o detetor pelo qual o objeto foi
+inicialmente destacado no L1. Se o objeto for confirmado e medidas mais
+precisas forem necessárias, outros decisores locais associados a diferentes
+detetores são disparados. Sendo assim, por exemplo, quando deseja-se confirmar
+um objeto EM, o processo deverá ser conduzido usando-se os dados dos
+calorímetros do ATLAS. Se a confirmação é para um múons, utiliza-se o detetor
+de múons.
+
+\subsection{Decisores Locais para os Calorímetros}
+
+Os decisores locais, que analisam os objetos destacados pelo L1 usando os
+calorímetros, executam diferentes algoritmos. A Tabela~\ref{tab:algo}
+correlaciona os tipos de algoritmos no L2 aos objetos destacados pelo L1. Com
+exceção do primeiro, os dois outros algoritmos precisam consultar outros
+detetores para a definição de seus objetos. O primeiro algoritmo tem que
+identificar, dos objetos EM destacados pelo L1, aqueles que realmente são
+resultantes da interação de elétrons ou fótons ($\gamma$). O segundo classifica
+jatos estreitos, definindo se são provenientes de decaimentos de hádrons
+(representados por $p/\bar{p}$ na tabela) e taus ($\tau$) e separando-os de
+outros tipos de jatos. Para isto, consulta os detetores de traços para mais
+informações sobre os eventos. O terceiro algoritmo destina-se à classificação
+de jatos quanto à sua energia e multiplicidade. Neste último quesito, deseja-se
+compreender se há mais de um jato agrupado na mesma RoI.
+
+Outra informação mostrada na Tabela~\ref{tab:algo} é o tamanho da RoI que deve
+ser transferida para os decisores locais \index{L2!tamanho da RoI}. A dimensão
+da RoI depende do algoritmo a ser transferido, mas é sempre um múltiplo do
+tamanho das torres de filtragem do primeiro nível. Os valores mostrados são
+para os algoritmos atualmente utilizados pela colaboração do sistema de
+filtragem do ATLAS \cite{l2tpr}.  A Tabela~\ref{tab:robs} indica o número de
+\eng{buffers} de leitura associado a alguns detetores do ATLAS
+\index{ROB!associação a detetores}. A segunda coluna desta tabela indica o
+número de ROBs que deverão ser ativados, em média, por RoI (com tamanho
+$\Delta\eta\times\Delta\phi = 0,4\times0,4$). A coluna seguinte indica o número
+máximo de ROB's por RoI\index{ROB!número máximo por RoI}, e por final, a última
+coluna indica o tamanho, em bits, da informação que será transferida dos ROB's
+para o L2 se uma RoI naquele detetor for requerida.
+
+De forma a transferir uma RoI para análise em um decisor local para os dados
+dos calorímetros, transfere-se $46+14=60$ kbits, ou seja, 7,5 quilobytes. O
+número médio de ROBs que deverá se consultar será $4,4+2,0=6,4$ ROB's e o
+número máximo $6+4=10$ ROB's. Repare que, por possuir menos ROB's acopladas, o
+calorímetro hadrônico do ATLAS (HCAL na tabela) terá cada um de seus ROB's
+consultado mais vezes \cite{daq62}. Sendo assim, algoritmos que priorizam a
+utilização do calorímetro EM são mais eficientes. Para os dados dos
+calorímetros há mais uma característica interessante: é garantido que os dados
+de uma torre de filtragem estejam concentrados em apenas um ROB. As torres de
+filtragem, como mencionou-se na seção~\ref{sec:l1}, representam a máxima
+granularidade visível no L1.
+
+\begin{table}
+\caption{Tipos de algoritmos no L2 e objetos relacionados no L1.}
+\label{tab:algo}
+\index{L2!algoritmos e objetos do L1}
+\begin{center}
+\begin{tabular}{||l|l|l||} \hhline{|t:=t=t=:t|}
+
+Objeto no L1 & Algoritmo no L2 & Tamanho da RoI $\eta\times\phi$\\
+
+\hhline{|:=:=:=:|} 
+
+EM & discriminação e$^{+-}$/$\gamma\times$ jato &
+	$0,4\times0,4$\\ \hhline{||-|-|-||} 
+
+Jatos Estreitos & discriminação $\tau$/p/$\bar{p}\times$ jato & 
+	$0,4\times0,4$\\ \hhline{||-|-|-||} 
+
+Jatos & classificação de jatos & $1,0\times1,0$\\ 
+
+\hhline{|b:=b=b=:b|}
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{table}
+\caption[Número de ROBs por detetor]{Número de ROBs por detetor. Esta tabela
+também mostra o volume de dados que devem ser guardados em cada ROB.}
+\label{tab:robs}
+\begin{center}
+\input{rob-table}
+\end{center}
+\end{table}
+
+\section{Decisão Local com objetos EM}
+\label{sec:localproc}
+
+Os objetos EM são importantes pois podem representar e\-lé\-trons e
+fó\-tons. E\-lé\-trons e fó\-tons, por sua vez, representam canais muito comuns
+no experimento \cite{l2tpr}. Estes elementos, no entanto, sofrem freqüentemente
+a contaminação por jatos de partículas, que interagem com os calorímetros e
+falseiam assinaturas de física significativa. Estes jatos colimados
+confundem o L1, pois têm características de deposição e isolamento muito
+parecidas com a de elétrons e fótons, dada a granularidade de processamento no
+L1. Uma análise mais apurada somente pode ser conduzida no L2, usando-se toda a
+granularidade disponível nos calorímetros.
+
+Para realizar a discriminação entre elétrons, fótons e jatos e a respectiva
+extração de características, o decisor local do L2 poderá carregar os dados dos
+calorímetros para aquele objeto destacado pelo L1. Os dados, no entanto, devem
+ser interpretados e pré-analisados antes da execução dos algoritmos de
+filtragem. Nesta seção, discuti-se o formato dos dados e formas de
+pré-processamento destes dados para que se adequem às necessidades dos
+algoritmos de decisão local. Dentre as etapas que serão destacadas tem-se:
+
+\begin{enumerate}
+\item Decodificação do posicionamento das células;
+\item Supressão de valores indesejados;
+\item Verificação de dados faltantes e sua compensação.
+\end{enumerate}
+
+\subsection{Decodificação da posicionamento das células}
+\index{L2!objetos de calorimetria!decodificação}
+
+As células do calorímetro são identificadas por um campo determinado e pelo
+valor de energia amostrado para um determinado evento, formando uma estrutura
+com 2 campos de 32 bits. Assim sendo, antes de executar qualquer outro
+algoritmo, o decisor local terá que identificar a posição das células que
+recebe, de forma a processá-las.
+
+A completa identificação das células inclui seu posicionamento no plano
+$\eta\times\phi$, o tipo de calorímetro e a camada a qual pertencem. Estas
+informações estão empacotadas em um campo de 25 bits, organizado como mostra a
+Figura~\ref{fig:bits}. Nesta figura, observa-se que os 8 bits menos
+significativos guardam a posição da célula em $\phi$, enquanto que os 9 bits
+seguintes, a posição em $\eta$, juntamente com um bit de sinal. Os campos
+seguintes, continuando da direita para a esquerda, guardam o número da camada e
+o tipo de calorímetro a qual a célula pertence. Os últimos 7 bits são inseridos
+apenas para completar uma palavra de 32 bits.
+
+\begin{figure}
+\epsimage{0.65}{0 0 646 107}{bitfield}
+\caption{Como o posicionamento de cada célula do calorímetro é empacotado em um
+campo de 25 bits.}
+\label{fig:bits}
+\end{figure}
+
+Após a decodificação do campo de bits, o processador poderá posicionar as
+células no plano $\eta\times\phi$ e prosseguir com a supressão de valores
+indesejados.
+
+\subsection{Supressão de valores indesejados}
+\label{sec:supress}
+\index{L2!calorimetria!supressão}
+
+O tamanho de uma RoI depende diretamente do algoritmo que realizará a
+discriminação, sendo este sempre múltiplo do tamanho das torres de filtragem no
+L1. Esta é uma escolha evidente, já que os dados de uma mesma torre de
+filtragem encontram-se concentrados no mesmo ROB. Portanto, através da consulta
+de uma tabela, é possível descobrir a quais ROB's se devem requisitar os dados.
+
+A requisição de dados dos ROB's acarreta um problema: o ROB deverá transferir
+todos os seus dados ou somente os dados relativos às torres de filtragem
+requisitadas? Para poder selecionar dados, os ROB's teriam que possuir alguma
+capacidade de processamento, o que aumentaria a sua complexidade. Caso o ROB
+não venha a ter alguma capacidade de seleção de dados, então transferirá todos
+os seus dados para os decisores locais, possivelmente congestionando a rede. O
+fluxo de informação, nos dois casos, poderia ser representado assim:
+
+\begin{enumerate}
+\item ROB sem capacidade de processamento
+	\begin{enumerate}
+	\item Um processador local do L2 requer os dados;
+	\item Algum processador simples, localizado no grupo de ROB's, traduz a
+	posição no plano \ep\ do centro da RoI requisitada para a identificação
+        dos ROB's que devem ser consultados;
+	\item Todos os dados dos ROB's são transferidos para o processador no
+	L2. Neste local, dados que não pertençam à RoI que se deseja processar
+	são destacados.
+	\end{enumerate}
+\item ROB com capacidade de pré-processamento
+	\begin{enumerate}
+	\item Um processador local do L2 requer os dados;
+	\item Algum processador simples, localizado no grupo de ROB's, traduz a
+	posição no plano \ep\ do centro da RoI requisitada para a identificação
+        dos ROB's que devem ser consultados;
+	\item O ROB destaca, dentro de seus dados, os dados das \eng{trigger
+	towers} que foram requisitadas;
+	\item Os dados das \eng{trigger towers} são transferidos para o
+	processador no L2.
+	\end{enumerate}
+\end{enumerate}
+
+Atualmente, considera-se que a supressão de valores indesejados será executada
+nos decisores locais, ainda que a decisão final não tenha sido tomada.
+
+\subsection{Verificação de dados faltantes}
+\label{sec:falta}
+\index{L2!calorimetria!dados faltantes}
+
+Após receber as células, decodificá-las e suprimir a informação de regiões
+indesejadas, o decisor local ou uma unidade de pré-processamento com este
+propósito terá que verificar a completude dos dados. Essa não é garantida pois,
+como os dados chegam de forma assíncrona, problemas diversos podem
+ocorrer. Dentre eles, é possível citar:
+
+\begin{itemize}
+\item Falha de célula(s) do calorímetro;
+\item Falha de parte dos ROBs conectados ao calorímetro;
+\item Falha de algum nó de processsamento ou da rede que abastece o sistema de
+extração de características;
+\item Demora excessiva para que um certo conjunto de dados requisitados pelo
+decisor local chegue, etc.
+\end{itemize}
+
+A forma de se remediar esta situação dependerá do algoritmo de processamento
+que será acoplado ao decisor local. 
+
+\subsection{Discriminação e Extração de Características}
+\label{sec:discrimination}
+\index{L2!calorimetria!discriminação}
+\index{L2!calorimetria!ext.~de caracte\-rís\-ticas}
+
+Depois de aplicado o pré-processamento, se faz necessária a confirmação do
+objeto destacado pelo L1 (discriminação) e a extração de algumas
+características do objeto. As características extraídas são utilizadas no
+processo de decisão global para adjetivar o objeto. Por exemplo, ``este objeto é
+um elétron com 33,5 GeV de energia transversa..."
+
+Dois problemas foram propostos aqui:
+
+\begin{enumerate}
+\item Extração de Características - Nesta fase, deseja-se calcular algumas das
+características do objeto EM sendo atualmente processado. Estas
+características são utilizadas na fase de decisão global, na verificação das
+assinaturas, e também podem ser utilizadas na fase de decisão local, para a
+confirmação do objeto. Elas incluem o isolamento e energia transversa ($E_t$)
+do objeto de estudo;
+\item Discriminação e/$\gamma\times$jato - Nesta fase, deseja-se certificar que
+o objeto EM destacado pelo primeiro nível é um elétron ou fóton, e
+\underline{não} um jato colimado.
+\end{enumerate}
+
+Estas duas fases podem ser realizadas em qualquer ordem, contanto que respeitem
+o sistema de decisão global e suas necessidades. A realizaçào da extração de
+características em primeiro lugar deverá ser seguida da discriminação do
+objeto. Se primeiramente deseja se realizar discriminação, deve-se prosseguir,
+confirmado o objeto, com a extração de características.
+
+O fluxograma na Figura~\ref{fig:em-flow} resume os passos aqui descritos. Nesta
+figura estão representados 2 fluxogramas que representam as duas formas
+descritas no parágrafo anterior de se realizar o processamento no decisor
+local. Na forma mais à esquerda (a), nota-se que o sistema discriminador atua
+diretamente sobre a informação pré-processada, dando a capacidade de se
+interromper o processamento antes da extração de características, caso o objeto
+naquele decisor local não seja confirmado. No segundo caso à direita (b), o
+sistema de discriminação conta com a extração de características para dar seu
+aval. Nesta hipótese, não é possível interromper o processamento de um objeto
+indesejado antes do final do algoritmo. Algoritmos mais eficientes são aqueles
+que realizam as fases de extração de características e discriminação de forma
+ótima, ou seja, representem as melhores alternativas para um dado tempo de
+processamento \eng{versus} desempenho de discriminação.
+
+\begin{figure}
+\epsimage{0.8}{0 0 390 583}{em-flow}
+\caption{Resumo gráfico das operações para a discriminação e/$\gamma\times$
+jato.}
+\label{fig:em-flow}
+\index{L2!decisor local!fluxograma}
+\end{figure}
+
+
+
+
+

@@ -1,0 +1,105 @@
+%% $Id: main.tex,v 1.2 2000/11/03 22:19:11 andre Exp $
+
+\typeout{ Este e um modelo para um documento LaTeX2e. Alguns pacotes e}
+\typeout{ comandos sao incluidos por default. Voce deve editar este arquivo}
+\typeout{ para ajusta-lo a suas necessidades.}
+\typeout{ $Id: main.tex,v 1.2 2000/11/03 22:19:11 andre Exp $}
+\typeout{ Andre Rabello dos Anjos <Andre.Rabello@ufrj.br>}
+\typeout{--}
+
+\documentclass[a4paper,12pt,oneside]{report}
+
+%% -----------------------------------------
+%% Lista de Pacotes que você deverá precisar
+%% -----------------------------------------
+\usepackage[english,portuges]{babel} % Para hifenação automática do português.
+\usepackage[latin1]{inputenc} % Para tradução automática de acentos p/ LaTeX.
+\usepackage[final]{graphicx} % Para incluir figuras EPS.
+\usepackage{color} % Para escrever algumas coisas coloridas.
+\usepackage{html} % Para usar os comandos pre-definidos por latex2html
+\usepackage{multirow} % Para ter múltiplas linhas por coluna
+\usepackage{hhline} % Para linhas mais interessantes em artigos
+\usepackage[chapter,boxed]{algorithm} % Para linhas de código mais atraentes
+%\usepackage{algorithmic} % Idem de algorithm
+\usepackage{float} % Para trocar o nome de Algorithm para Implementação
+\usepackage{floatflt} % Para ter figuras flutuantes
+\usepackage{lscape} % para colocar algum material na vertical
+\usepackage{array} % para tabelas mais legais
+\usepackage{tabularx} % para tabelas mais legais
+\usepackage{indentfirst} % indentacao de primeiro paragrafo
+\usepackage{amssymb} % Para os símbolos matemáticos. Coloque antes de amsmath
+\usepackage{amsmath} % Para as fórmulas e ambientes.
+\usepackage{alltt} % Para entrada verbatim com comandos LaTeX
+\usepackage{makeidx} % Para a geração de índices
+\usepackage{tocbibind} % Para a inclusão de bibliografia e índices na ToC
+\renewcommand{\tocbibname}{Referências Bibliográficas}
+\usepackage{pagina-coppe} % pagina-padrao da COPPE
+\usepackage{rotating} % para rotacionar alguns flutuantes
+\usepackage{subfigure} % Para subfiguras (a), (b) e (c)...
+%\usepackage{draftcopy} % Para imprimir DRAFT na diagonal em cada página do .ps
+
+% Algumas coisas já definidas. Você deverá ter o fonte comandos.tex no
+% diretório atual para poder usar estes comandos.
+
+\input{comandos}
+% Cria os índices deste trabalho.
+\makeindex
+
+\begin{document}
+
+\setcounter{page}{9}
+\verb#  #
+\clearpage
+\setcounter{page}{11}
+\verb#  #
+\clearpage
+\setcounter{page}{14}
+\verb#  #
+\clearpage
+\setcounter{page}{16}
+\verb#  #
+\clearpage
+\setcounter{page}{19}
+\verb#  #
+\clearpage
+\setcounter{page}{28}
+\verb#  #
+\clearpage
+\setcounter{page}{35}
+\verb#  #
+\clearpage
+\setcounter{page}{72}
+\verb#  #
+\clearpage
+\setcounter{page}{73}
+\verb#  #
+\clearpage
+\setcounter{page}{103}
+\verb#  #
+\clearpage
+\setcounter{page}{109}
+\verb#  #
+\clearpage
+\setcounter{page}{112}
+\verb#  #
+\clearpage
+\setcounter{page}{116}
+\verb#  #
+\clearpage
+\setcounter{page}{123}
+\verb#  #
+\clearpage
+\setcounter{page}{125}
+\verb#  #
+\clearpage
+\setcounter{page}{130}
+\verb#  #
+\clearpage
+\setcounter{page}{140}
+\verb#  #
+\clearpage
+\setcounter{page}{152}
+\verb#  #
+\clearpage
+
+\end{document}

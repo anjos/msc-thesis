@@ -1,0 +1,80 @@
+% $Id: comandos.tex,v 1.1 2000/11/03 20:47:00 andre Exp $
+
+% Este fonte LaTeX deve ser incluído com um \input{} em outro fonte LaTeX.
+% Ele consiste de novos comandos que facilitam certas atividades quando se
+% está escrevendo em LaTeX.
+
+%% Estes comandos aqui definem novas cores. Para usá-las, você tem que
+%% incluir no seu fonte, o pacote 'color'
+\definecolor{azul}{rgb}{0.2,0.2,0.8}
+\definecolor{verde}{rgb}{0.2,0.7,0.2}
+\definecolor{vermelho}{rgb}{0.7,0.2,0.2}
+
+%% Este comando inclui uma imagem, no formato EPS. Use o pacote 'graphicx'.
+\newcommand{\epsimage}[3]{%
+\begin{center}%
+\includegraphics[type=eps,ext=.eps,scale=#1,bb=#2]{figures/#3}%
+\end{center}}
+
+%% Mudança de linguagem com o Babel. O pacote 'babel' deve ser usado.
+\newcommand{\eng}[1]{\foreignlanguage{english}{\emph{#1}}}
+\newcommand{\fr}[1]{\foreignlanguage{french}{\emph{#1}}}
+
+%% Alguns atalhos
+\newcommand{\eiro}{$^{\underline{o}}$} % Desenha o 'o.' do 1o.
+\newcommand{\eira}{$^{\underline{a}}$} % Desenha o 'a.' de 1a.
+\newcommand{\expo}[2]{$#1^{#2}\/$} % exponencia o 1o. arg com o 2o.
+\newcommand{\raw}[1]{{\tt #1}} % Vai para modo truetype (raw text)
+
+%% Para o novo ambiente algoritmo
+\floatname{algorithm}{Implementação}
+\renewcommand{\listalgorithmname}{Lista de Implementações}
+
+%% Para classes
+\newcommand{\classe}[1]{\foreignlanguage{english}{\texttt{#1}}}
+\newcommand{\kword}[1]{\underline{\textsc{\color{azul}{#1}}}}
+
+%% Define um ambiente para a ficha bibliográfica
+\newenvironment{ficha}{%
+\newlength{\largura}% calcula a largura de 40 colunas verbatim
+\settowidth{\largura}{\ttfamily aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}%
+\begin{center}%
+\begin{minipage}{\largura}%
+\newlength{\saveparid}% cria um repositório
+\setlength{\saveparid}{\parindent}% guarda o valor default
+\setlength{\parindent}{0.6cm}}%
+{%
+\setlength{\parindent}{\saveparid}% restaura o valor default
+\end{minipage}%
+\end{center}}
+
+%% Define um ambiente para as dedicatórias e agradecimentos
+\newenvironment{dedicate}[2]{%
+\begin{flushright}%
+\begin{minipage}{#1}%
+\begin{center}
+#2
+\end{center}
+\setlength{\saveparid}{\parindent}% guarda o valor default
+\setlength{\parindent}{0.6cm}}%
+{%
+\setlength{\parindent}{\saveparid}% restaura o valor default
+\end{minipage}%
+\end{flushright}}
+	
+%% Define um ambiente para digitar código
+\newenvironment{codigo}%
+{\begin{alltt}\renewcommand{\baselinestretch}{1}\small}%
+{\normalsize\renewcommand{\baselinestretch}{1.5}\end{alltt}}%
+
+%% Atalhos
+\newcommand{\etem}{E$^{\text{e.m.}}_{T_{3\times7}}$}
+\newcommand{\ethad}{E$^{\text{HAD}}_{T_{0,2\times0,2}}$}
+\newcommand{\rshape}{R$^{\text{shape}}_{\eta}$}
+\newcommand{\rstrip}{R$^{\text{strip}}_{e.m._1}$}
+\newcommand{\ep}{$\eta\times\phi$}
+
+
+
+
+

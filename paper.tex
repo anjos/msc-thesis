@@ -1,0 +1,161 @@
+\chapter{Trabalhos publicados}
+
+Este apêndice lista algumas notas e artigos publicados pelo autor, que tiveram
+impacto neste trabalho ou dele são resultantes. Os resumos (\eng{abstracts})
+destes trabalhos estão inclusos na listagem.
+
+\begin{description}
+
+\item[1997] 
+
+\textbf{\eng{Fast Neural Decision System Based on DSP's and Parallel
+Processing}} - \eng{International Conference on Signal Processing Applications
+and Technologies}
+\begin{quotation}
+\noindent
+Um protótipo para um sistema \eng{on-line} de validação é desenvolvido para
+aplicações em experimentos com colisionadores de altas energias. O sistema,
+primordialmente, usa redes neuronais para extrair eventos raros com significado
+físico de um ruidoso ambiente. Tal sistema é baseado no processamento da
+informação coletada de diferentes detetores que são posicionados ao redor da
+colisão. Combinando uma fase de extração de características para cada detetor
+com uma fase de decisão global para uma decisão final sobre eliminar ou não um
+evento, o sistema atua em eventos previamente selecionados pelo primeiro nível
+de análise que reduz a taxa de eventos para 100 kHz. Para cobrir com esta
+freqüência de entrada, o sistema proposto está sendo emulado em um computador
+baseado em \eng{transputers} com 16 nós de processamento que, por sua vez,
+possuem um processador digital de sinais acoplado, funcionando como
+co-processadores para os \eng{transputers}.
+\end{quotation}
+
+\item[1998] 
+
+\begin{itemize}
+\item \textbf{\eng{A Neural Online Triggering System based on Parallel
+Processing}} - \eng{IEEE Transactions on Nuclear Science}
+\begin{quotation}
+\noindent
+O estudo de um protótipo do segundo nível de filtragem que operará nas
+condições do LHC é endereçado através de uma implementação baseada em uma
+máquina paralela. O computador baseado em 16 nós, contendo em cada um
+\eng{transputer}, usa um processador digital de sinais que atua como
+co-processador para otimizar o processamento de sinal nas aplicações. Um
+ambiente de desenvolvimento em linguagem C é usado para rodar todas as
+aplicações em sua forma mais veloz. A implementação é baseada na informação
+dada por quatro detetores e inclui duas fases distintas de operação: extração
+de características e decisão global. A extração de características para
+calorímetros e a decisão global são executadas usando-se redes neuronais. O
+pré-processamento e os parâmetros das redes (neuronais) são guardados em
+memória e a função de ativação é implementada usando uma tabela. Dados
+simulados para o segundo nível de filtragem são utilizados para a avaliação da
+performance.
+\end{quotation}
+
+%\item \textbf{\eng{Neural Classifiers Implemented in a Transputer Based
+%Parallel Machine}} - International Meeting on Vector and Parallel Processing
+%(VECPAR) 
+%\begin{quotation}
+%
+%\end{quotation}
+
+\item \textbf{\eng{Requirements, Constraints, Use-Cases and an Object Oriented
+Analysis of the Steering and Feature Extraction Systems for ATLAS/Trigger Level
+2}} - CERN - \eng{Testbed Technical Note 8}
+\begin{quotation}
+\noindent
+Esta nota reúne um conjunto de demandas, restri\-çõ\-es e ``casos-\-de-\-uso"
+para o Supervisor e os Sistemas de Processamento de Dados (SPD) do segundo
+nível de filtragem (L2). Um Análise Orientada a Objetos (AOO) é conduzida na
+seqüência, respeitando abstração, encapsulamente e as demandas e restrições do
+sistema. O objetivo deste documento não prover um conjunto completo de
+demandas, restrições e ``casos-de-uso", mas formar uma base para
+desenvolvimentos futuros e ampliações. As demandas foram coletadas de notas
+diferentes e organizadas. Entidades (predecessores de classes) são abstraídas
+dessas demandas e relacionamentos são baseados nos ``casos-de-uso".
+\end{quotation}
+
+\item \textbf{\eng{OO Design of the Steering System}} - CERN - \eng{Testbed
+Technical Note 17}
+\begin{quotation}
+\noindent
+Esta nota sumariza o projeto orientado a objetos que foi utilizado no sistema
+de supervisão para o \eng{Software} de Referência do segundo nível de
+filtragem. Além da definição das interfaces para o supervisor e para o sistema
+de extração de características, a definição das classes mais relevantes para o
+supervisor é dada. Ademais, a relação dessas classes é definida e as mensagens
+passadas entre estes objetos são explicadas de forma que opere como esperado
+durante o processamento de um evento.
+\end{quotation}
+
+\item \textbf{\eng{Design of the Feature Extraction System}} - CERN -
+\eng{Testbed Technical Note 20}
+\begin{quotation}
+\noindent
+Este artigo apresenta um projeto orientado a objetos e definições de classe da
+interface entre o sistema de Extração de Características (``\eng{FEx System}",
+contendo o Coletor de Dados e o algoritmo de FEx propriamente dito) e as outras
+partes do sistema de filtragem de segundo nível diretamente conectadas ao FEx
+(Supervisor, ROB's e a Descrição Geométrica do Detetor).
+\end{quotation}
+
+\item \textbf{Um Protótipo do Sistema de Validação de Nível 2 para as Condições
+do LHC} - XIX Encontro Nacional de Fí\-sica de Par\-tí\-culas e Campos
+\begin{quotation}
+\noindent
+O experimento ATLAS pretende comprovar a existência do bóson de Higgs. Para
+tal, um grande sistema de deteção e aquisição vem sendo projetado. O sistema
+aquisição tem a função de e separar em tempo real interações originárias do
+decaimento de um Higgs de física ordinária.
+
+\noindent
+A filtragem de eventos no sistema de aquisição é concebida em três níveis de
+complexidade crescente e velocidade decrescente. O segundo nível pretende
+utilizar redes de computadores pessoais (PC's) interconectados por rápidos
+sistemas de rede. A escolha de fabricantes, sistemas operacionais e algorítmos
+de processamento ainda não foi feita, mas esforços em prol desta decisão vem
+sendo realizados. Neste trabalho desenvolve-se uma fração do filtro de segundo
+nível utilizando-se de processamento paralelo, redes neurais artificiais e
+DSP's. Conclusões e resultados são endereçados no final.
+\end{quotation}
+
+\end{itemize}
+
+\item[1999] 
+
+\textbf{Integrando Plataformas e Algoritmos para o Segundo Nível de
+Trigger do Experimento ATLAS} - XX Encontro Nacional de Fí\-sica de
+Par\-tí\-culas e Campos
+\begin{quotation}
+\noindent
+No ano de 2005 entrará em funcionamento o experimento ATLAS, que
+pretende verificar interações a 16 Tev. A física de interesse é rara e o número
+de eventos gerados é enorme. Um sistema de filtragem será, então, responsável
+pela separação da fisíca de interesse da física ordinária. Este sistema é
+dividido em níveis de processamento. No segundo nível de filtragem estão sendo
+investigados vários algoritmos e plataformas. Aqui apresentamos
+desenvolvimentos para o Software de Referência, que visa integrar os estudos de
+algoritmos com realização tecnológica neste nível de filtragem.
+\end{quotation}
+
+\item[2000] 
+
+\textbf{\eng{Neural Electron-Jet Separation Using Multi-layered and
+Multi-segmented Calorimeters}} - XXI Encontro Nacional de Fí\-sica de
+Par\-tí\-culas e Campos (submetido ao \eng{Brazilian Journal of Physics})
+\begin{quotation}
+\noindent
+Este trabalho descreve um enfoque neuronal para a discriminação elétron/jato no
+segundo nível de filtragem do ATLAS. Estudos são baseados numa compres\-são
+rá\-pida usando o perfil de deposi\-ção ener\-gé\-tica das partículas nos
+calorímetros.  Uma comparaçào entre este enfoque e o atual (clássico) para a
+mesma tarefa mostra melhores resultados. O método proposto aqui consegue
+atingir 95,67\% de eficiência na discriminação de elétrons com menos de 4,26\%
+de jatos sendo erroneamente classificados.
+\end{quotation}
+
+\item[2001]
+
+Os resultados deste trabalho serão submetidos ao \eng{Computer Physics
+Communications}.
+
+\end{description}

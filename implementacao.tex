@@ -1,0 +1,606 @@
+\chapter{Implementação do Decisor Neuronal Local}
+\label{chap:impl}
+
+Durante o processamento local no L2, é possível se distingüir as seguintes fases,
+como discutido no Capítulo~\ref{chap:l2}:
+
+\begin{description}
+\item[Aquisição de Dados] Nesta fase do processamento local interessa-se em
+agrupar as informações contidas nos diversos ROBs, de forma a poder reconstruir
+a RoI de interesse;
+\item[Pré-processamento] Os dados recolhidos na fase de aquisição são
+processados nesta fase. Este pré-processamento tem por objetivo:
+	\begin{itemize}
+	\item Supressão de dados excedentes (discutido na
+	Seção~\ref{sec:supress}); 
+	\item Verificação da integridade da RoI e tratamento de dados
+	faltantes (discutido na Seção~\ref{sec:falta});
+	\item Pré-processamento específico para o discriminador, ou seja,
+	formatar os dados que se alimente o discriminador elétron/jato ;
+	\end{itemize}
+\item[Discriminação] Após os pré-processamento, aplica-se o sistema de
+discriminação adequado à deteção do objeto, como definido no
+Capítulo~\ref{chap:neural};
+\item[Extração de Características] Nesta fase interessa-se em extrair
+as quantidades físicas que definem o objeto, tais como energia transversa,
+momento, isolamento, etc. Estas características serão utilizados pelo L2 para
+definir os eventos que serão re-passados ao L3.
+\end{description}
+
+Neste capítulo se introduz alguns detalhes de implementação de um decisor
+local para objetos e.m., utilizando-se das técnicas de discriminação neuronal
+introduzidas no Capítulo~\ref{chap:neural}. Apresenta-se também resultados de
+testes de desempenho, acuidade e tempo de resposta.
+
+O projeto foi dividido em duas tarefas tarefas distintas: o projeto de um
+pré-processador para os dados do calorímetro, que terá a responsabilidade de
+conduzir todas as etapas de pré-processamento descritas anteriormente, e um
+discriminador de objetos e.m., neural, que tem por objetivo a separação
+elétron/jato. Ao final, une-se as duas aplicações em uma implementação para
+um processador digital de sinais (DSP) da família 21k da Analog Devices,
+formando um decisor local completo.
+
+A extração de características não é abordada neste trabalho, por se tratar de
+um procedimento padronizado de processamento e onde maiores otimizações não
+serão necessárias. Para maiores referências, ao leitor é indicado
+\cite{l2tpr}. Ainda assim, esta implentação traz uma vantangem em relação aos
+demais decisores locais implementados, já que é a mais completa. Espera-se que
+este trabalho seja utilizado como base de comparação no futuro para sistemas
+que integrem toda a funcionalidade do decisor local para objetos e.m. no
+segundo nível de filtragem do ATLAS.
+
+Durante os 10 anos de funcionamento a que se destina o experimento ATLAS, será
+necessário que não somente, mas principalmente, o sistema de filtragem sofra
+alterações tanto a nível de manutenção quanto à inclusão e exclusão de
+procedimentos, ou seja, novas técnicas de filtragem, seleção de eventos,
+etc. Desta forma, o sistema de filtragem, deverá ser construído de forma que
+seja robusto e flexível a mudanças, o que dificilmente é atingido quando se
+utiliza \eng{hardware} de baixa programabilidade. Infelizmente, para L1, os
+requisitos de tempo são mais importantes que a flexibilidade do sistema, o que
+obriga os projetistas deste sub-sistema a implementarem-no usando recursos
+menos flexíveis. No entanto, em níveis de filtragem mais altos, como no L2, os
+requisitos de tempo igualam-se à flexibilidade desejada e portanto,
+computadores multi-processados e linguagems populares de programação serão
+utilizados em sua implementação. Em específico, C e C++ foram as linguagens de
+programação escolhidas tanto para a implementação do L2 quanto do L3. Para a
+implementação do decisor local neste trabalho, utilizou-se a linguagem de
+programação C. Esta implemetação, embora não esteja totalmente integrada no
+ambiente do L2, respeita todas as suas limitações e utiliza todas as suas
+vantagens. Acredita-se que com um esforço mínimo, as rotinas de filtragem sejam
+portadas para um ambiente 100\% compatível com o \eng{Software} de
+Referência. Atualmente, o sistema de filtragem aqui proposto roda
+\eng{stand-alone}.
+
+\section{Pré-processamento de dados}
+
+Nesta fase interessa-se na aquisição e tratamento dos dados de forma que possam
+ser encaminhados ao discriminador. Adotou-se o pré-processamento em anéis como
+já discutido. A normalização das somas em anel a ser utilizada aqui é a que
+apresentou os melhores resultados no Capítulo~\ref{chap:neural}, i.e., usando
+toda a energia contida no objeto. A seguir, as etapas envolvidas nesta fase de
+pré-processamento são discutidas com maior detalhamento.
+
+\subsection{Aquisição de Dados}
+\label{sec:daq}
+
+O \eng{Software} de Referência (Capítulo~\ref{chap:refsoft}) emula as condições
+reais do segundo nível do sistema de filtragem do ATLAS como foi visto. Isto
+acontece pois não há condições de se construir um sistema \eng{on-line}, já que
+os detetores ATLAS ainda vêm sofrendo alterações e adaptações.
+
+Assim sendo, a forma atual de aquisição de dados para este ambiente emulado do
+L2, é a leitura de bancos de dados contendo eventos simulados e gravados em
+mídia permanente, como discos rígidos. Para a consulta do banco de dados,
+utilizou-se uma biblioteca especial, desenvolvida pelo time do L2, com este
+propósito.
+
+Esta etapa é uma das partes do decisor local que terá que ser adaptada, caso o
+sistema seja integrado no \eng{Software} de Referência. Para isto, o projetista
+poderá utilizar a classe \texttt{CaloEMLocalProcessor} transplantando o
+algoritmo de discriminação para dentro do objeto \texttt{\_discriminator} e
+utilizando o objeto \texttt{\_collector} para a aquisição de dados automática,
+como descrito na Implementação~\ref{imp:localdec3} no
+Capítulo~\ref{chap:refsoft}.
+
+\paragraph{Supressão de dados} Nos arquivos de dados, os eventos e RoI's
+associadas não contém informação que excede ao seu domínio. Em outras palavras,
+somente os dados do evento estão presentes nos arquivos de dados, não havendo a
+necessidade da supressão de regiões indesejadas, como colocado na
+Seção~\ref{sec:supress}.
+
+\subsection{Verificação de Integridade da RoI}
+
+Após a aquisição, é necessário verificar se os dados de todo o domínio da RoI
+estão presentes. Caso não estejam, opta-se por substituir os dados por
+seus valores médios (normalizados), substituir a região faltante com zeros ou
+ainda, para efeitos de estudo, eliminar a RoI de nosso conjunto de dados.
+
+O pré-processador que foi construído é bastante rígido neste aspecto: caso não
+encontre o número de células que espera, não pré-processa a RoI. Além disso, o
+processamento em anéis exige que haja uma granularidade constante na
+camada. Sabe-se, por outro lado, que os calorímetros do ATLAS, em sua
+configuração atual, possuem granularidade variante, não somente camada a
+camada, mas também dentro de uma mesma camada.
+
+Isto nos coloca um segundo problema: como garantir granularidade contínua? Uma
+solução simples seria interpolar bi-dimensionalmente cada camada da RoI, de tal
+forma que a granularidade camada a camada permaneça constante e igualmente
+fina. Por outro lado, este pode ser um processo bastante trabalhoso do ponto de
+vista do decisor local, sendo uma solução mais prática a decimação da RoI, até
+que a granularidade seja constante e menos fina naquela camada.
+
+A Figura~\ref{fig:intdec} exemplifica os processos de interpolação e decimação
+descritos. Na figura, à esquerda é possível ver um esboço das células de uma
+camada. Percebe-se que à direita da camada há uma descontinuidade de
+granularidade, que pass a ser menos fina. As regiões modificadas que estão
+representadas à direita da Figura~\ref{fig:intdec} mostram como ficariam as
+camadas após o processo de interpolação (\eng{up-sampling}) e decimação
+(\eng{down-sampling}). Na primeira possibilidade, a interpolação, regiões com
+maior granularidade seriam preservadas, enquanto que regiões menos granulares
+seriam re-dimensionadas para que sua granularidade seja igual a da
+primeira. Assim, por exemplo, se uma célula originará, após a interpolação,
+duas novas, divide-se a energia daquela célula por dois, para representar a
+energia de cada uma das novas células criadas. Neste caso, aplica-se tantas
+divisões quanto forem necessárias para a uniformização da granularidade na
+camada. Na decimação é possível se realizar o processo inverso. É possível
+empregar técnicas tradicionais para este processo \cite{signal:mitra}, como uma
+pré-filtragem por um passa-baixas para evitar \eng{aliasing}, ou simplesmente
+dividir a energia da célula pelo número de células na nova granularidade. Ou
+seja, as energias das células que serão agrupadas através da decimação, em uma
+única, são, então, somados.
+\begin{figure}
+\epsimage{0.45}{0 0 656 652}{intdec-roi}
+\caption{Interpolação e decimação bi-dimensional da RoI para ajuste de
+granularidade.}
+\label{fig:intdec}
+\end{figure}
+
+Há vantangens e desvantagens em ambos os enfoques. No primeiro (interpolação)
+aplica-se divisões, cujo o processamento é notoriamente lento, e no segundo,
+perde-se a informação de granularidade. Este estudo deve ser conduzido de
+forma criteriosa e levando-se em consideração o desempenho do discriminador,
+tanto em tempo quanto eficiência de separação das classes.
+
+Neste trabalho, limitou-se o domínio de estudo a RoI's que têm seus centros com
+$|\eta|<1,1$. Dentro desta região não há mudanças de granularidade que demandem
+processamento específico. Por outro lado, por ser um estudo comparativo, os
+resultados não sofrerão tendências, já que o mesmo conjunto de dados foi
+aplicado a ambos, ao processamento clássico (usando as quatro variáveis
+introduzidas no Capítulo~\ref{chap:neural}) e ao processamento baseado em anéis.
+
+De fato, mostra-se em \cite{l2tpr} que há uma piora de algumas unidades
+percentuais no algoritmo clássico, quando aplicado à regiões de interesse cujo
+o centro está em regiões nos quais $|\eta|$ é maior que 1,1. Sendo assim,
+compara-se estes estudos com o máximo desempenho do algoritmo
+clássico. Estudos posteriores, entretanto, deverão considerar o desempenho
+para todas as possíveis RoI's.
+
+\subsection{Pré-processamento específico}
+
+Nesta fase, interessa-se por gerar os anéis a partir das células da
+RoI. Aproveitando o estudo de relevâncias, é possível avaliar o tempo de
+processamento para diferentes quantidades de anéis. Estes testes investigarão a
+eficácia do algoritmo, verificando o impacto no tempo de processamento no
+requerido para o pré-processamento.
+
+O número de anéis é, de fato, uma variável importante no processo de
+discriminação, o processo de normalização, é aplicado diretamente aos anéis
+formados. Neste caso, possuindo-se 58 anéis, têm-se que normalizar 58
+varíaveis. A redução no número de quantidades a serem normalizadas irá,
+portanto, diminuir o tempo de processamento.
+
+As rotinas implementadas possuem um dispositivo que permite que o número de
+anéis e camadas que é utilizado no pré-processamento da região de interesse
+seja controlado, de forma a produzir um pré-processador mais compacto ou mais
+extenso, reduzindo e aumentando o tempo de pré-processamento específico,
+respectivamente.
+
+\subsection{Resultados da implementação}
+
+Inicialmente, implementou-se um sistema de pré-processamento \eng{off-line}
+utilizando os recursos listados. Esta implementação servirá como ponte para uma
+implementação em \emph{tempo real}, como será visto mais a frente. 
+
+Através de um \eng{profiler}\footnote{\eng{Profiler} é um programa que permite
+que um arquivo de dados especial, produzido após a execução de outro programa,
+possa ser interpretado, produzindo os intervalos de tempo (relativos e
+absolutos) que cada sub-rotina ocupou no tempo de processamento da aplicação.},
+é possível entender a percentagem do tempo gasto em cada atividade do 
+pré-processamento e estimar, com os cortes baseados na relevância, o tempo de
+processamento final da aplicação.
+
+Nesta versão do pré-processador, deseja-se extrair e normalizar os 58 anéis
+propostos no início do Capítulo~\ref{chap:neural}. A Figura~\ref{fig:pie} é uma
+ilustração do tempo de processamento percentual, por RoI, que é gastos nas
+diversas fases do pré-processamento. Este gráfico traduz, aproximadamente, as
+informações de uma sessão de \eng{profiling} no pré-processador, tendo sido
+compilado tanto com e sem otimização. Neste gráfico, é possível ver que a maior
+parte do tempo de processamento está na aquisição das células. O motivo do
+esforço computacional advém do fato que as células colhidas dos ROB's (aqui
+emulados pela consulta ao banco de dados) são enviadas fora de ordem e
+codificadas. O sub-sistema de aquisição deve organizar as células de acordo com
+sua posição na RoI antes, ou paralelamente a verificação da integridade dentro
+da região de interesse. É interessante notar que apenas 6\% do tempo é, de
+fato, gasto com a extração de anéis.
+
+\begin{figure}
+\epsimage{0.70}{23 249 467 600}{time-slice}
+\caption{Organização percentual do tempo durante o pré-processamento de objetos
+e.m..}
+\label{fig:pie}
+\end{figure}
+
+O tempo médio de processamento encontrado para esta parte do processador local,
+em um PC, com processador Pentium compatível e 450 MHz de \eng{clock} é de 13
+milissegundos por RoI\footnote{Estes resultados advém de um código otimizado
+pelo compilador utilizado (\texttt{GNU})}. Porém, o sistema de
+pré-processamento construído possui um conjunto de opções que podem ser mudadas
+a cada vez que é executado. Estas opções são utilizadas para modificar o tipo
+de saída, normalização e a forma como a checagem de integridade é conduzida
+pelo programa. Estes recursos introduzem uma latência que prejudica a
+eficiência no tempo.
+
+\section{Discriminação neuronal de objetos e.m.}
+
+A fase seguinte ao pré-processamento é a discriminação dos objetos que foram
+adquiridos pelo sistema de pré-processamento. Esta tarefa é simples e consiste
+basicamente de uma rede neural, com 58 entradas e uma saída. A rede deverá ser
+totalmente conectada, como apontam os estudos do
+Capítulo~\ref{chap:neural}. Para a implementação que será aqui estudada,
+utilizar-se-á o projeto obtido no teste 17 (5 neurônios na camada escondida),
+cuja configuração e resultados estão na Tabela~\ref{tab:ring-neural}.
+
+Implementou-se este sub-sistema utilizando-se da linguagem de programação C,
+como no caso do pré-processador. Aqui, além do tempo de desempenho, se está
+preocupado também com a precisão da saída, comparando-se o resultado da
+implementação com aqueles da simulação \eng{off-line}. Em termos da função de
+ativação dos neurônios, diferentes realizações podem ser testadas:
+
+\begin{enumerate}
+\item Implementação através da diretiva \texttt{tanh()} nativa do sistema, com
+64 bits de precisão;
+\item Implementação através da diretiva \texttt{tanh()} nativa do sistema, com
+32 bits de precisão;
+\item Implementação por tabela (\eng{Look-up Table}). Nesta versão, os limites
+da tabela e a precisão da conversão serão variáveis de interesse.
+\end{enumerate}
+
+Tomando por base a implementação descrita no ítem 1, pode-se avaliar o tempo de
+pré-processamento em função da qualidade de separação alcançada através de
+todas as técnicas em estudo. É possível também avaliar o impacto no tempo de
+processamento, mudando-se a configuração da rede e as opções de compilação do
+código. 
+
+\subsection{Implementa\-ção da ativa\-ção neuronal}
+
+Ao construir um sistema neuronal, que acarreta em um grande número de operações
+e acumulações, deve-se preocupar com a precisão e velocidade de cada
+operação. Na codificação em C, dois tipos de variáveis operam sobre números
+reais: \texttt{float} e \texttt{double}. Utilizando um sistema GNU/Linux em
+computadores compatíveis com a linha Intel 386, \texttt{float}'s têm 32 bits de
+precisão, enquanto que \texttt{double}'s, 64 bits. Com relação aos tipos de
+operações, é possível também definir duas possibilidades: utilizar as funções
+da biblioteca (\eng{built-in}) ou um procura em tabela (do inglês, \eng{Look-up
+Table}), implementada diretamente no programa. Com excessão da ativação
+neuronal, todas as outras funções serão programadas com componentes da
+biblioteca.
+
+No caso de optar-se pela implementação da tangente hiperbólica por meio de
+tabelas de procura (TP), deve-se controlar duas variáveis: o fim da TP e a sua
+resolução. O fim da TP marcará o valor do último argumento com o qual a função
+retornará um valor de sua tabela interna, indicando, assim, a saturação da
+função tangente hiperbólica.
+
+\subsubsection{Acuidade}
+
+A Tabela~\ref{tab:lut-prec} mostra o erro médio quadrático referido a
+implementação 1 (lógica de 64 bits/função de ativação interna à biblioteca),
+quando utiliza as várias possibilidades averiguadas para a ativação dos
+neurônios de uma rede neuronal com 58 nós de entrada, 5 nós na camada
+intermediária e apenas um nó na saída. Cada vez que propaga-se a entrada até a
+saída, a rede executará $58*5=290$ multiplicações da entrada até a camada
+escondida da rede, seguindo-se de 5 somatórios, cada um com 58 entradas. O
+resultado dos 5 somatórios são ativados de acordo com o método indicado nesta
+tabela. A transmissão sináptica da camada escondida para a camada de saída
+acontecerá de forma similar. No total, utiliza-se 6 ativações, 295
+multiplicações e 289 somas. Este representa o pior caso que será enfrentado em
+termos de complexidade, pois todas as demais configurações de redes neuronais
+(que se destacaram pelo desempenho no Capítulo~\ref{chap:neural}) requerem um
+menor número de operações.
+
+\begin{table}
+\caption{Erro Médio Quadrático por tipo de variável/ativação. Estes testes
+utilizam uma rede neuronal 58-5-1.}
+\label{tab:lut-prec}
+\begin{center}
+\begin{tabular}{|l|l|r|r|r|} \hline
+Variáveis & Ativação & Fim da TP & Resolução & EMQ \\ \hline \hline
+64 bits & nativa & - & - & 0 \\ \hline
+64 bits & TP & 6.0 & $10^{-2}$ & $(5,28\pm0,23)\times10^{-5}$ \\ \hline
+64 bits & TP & 6.0 & $10^{-3}$ & $(5,30\pm0,23)\times10^{-7}$ \\ \hline
+64 bits & TP & 6.0 & $10^{-4}$ & $(5,14\pm0,22)\times10^{-9}$ \\ \hline
+64 bits & TP & 4.0 & $10^{-2}$ & $(5,28\pm0,23)\times10^{-5}$ \\ \hline
+64 bits & TP & 4.0 & $10^{-3}$ & $(5,46\pm0,24)\times10^{-7}$ \\ \hline
+64 bits & TP & 4.0 & $10^{-4}$ & $(2,10\pm0,09)\times10^{-8}$ \\ \hline
+64 bits & TP & 2.0 & $10^{-2}$ & $(1,28\pm0,05)\times10^{-4}$ \\ \hline
+64 bits & TP & 2.0 & $10^{-3}$ & $(7,28\pm0,31)\times10^{-5}$ \\ \hline
+64 bits & TP & 2.0 & $10^{-4}$ & $(6,98\pm0,29)\times10^{-5}$ \\ \hline
+32 bits & nativa & - & - & $(4,71\pm0,20)\times10^{-14}$ \\ \hline
+32 bits & TP & 6.0 & $10^{-2}$ & $(5,28\pm0,23)\times10^{-5}$ \\ \hline
+32 bits & TP & 6.0 & $10^{-3}$ & $(5,30\pm0,23)\times10^{-7}$ \\ \hline
+32 bits & TP & 6.0 & $10^{-4}$ & $(5,14\pm0,22)\times10^{-9}$ \\ \hline
+32 bits & TP & 4.0 & $10^{-2}$ & $(5,28\pm0,23)\times10^{-5}$ \\ \hline
+32 bits & TP & 4.0 & $10^{-3}$ & $(5,46\pm0,24)\times10^{-7}$ \\ \hline
+32 bits & TP & 4.0 & $10^{-4}$ & $(2,10\pm0,09)\times10^{-8}$ \\ \hline
+32 bits & TP & 2.0 & $10^{-2}$ & $(1,25\pm0,05)\times10^{-4}$ \\ \hline
+32 bits & TP & 2.0 & $10^{-3}$ & $(7,28\pm0,31)\times10^{-5}$ \\ \hline
+32 bits & TP & 2.0 & $10^{-4}$ & $(6,98\pm0,29)\times10^{-5}$ \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Nos testes realizados não observou-se nenhuma mudança do desempenho na
+discriminação de elétrons e jatos utilizando nas configurações indicadas na
+Tabela~\ref{tab:lut-prec}. Ou seja, independente da resolução e forma de
+implementação, o sistema final discrimina com a mesma eficiência elétrons e
+jatos. Utilizou-se uma patamar fixo em 0, para estes testes, reconhecendo
+elétrons quando a saída da rede neuronal for menor do que zero.
+
+A Figura~\ref{fig:error-hist} mostra o erro na saída da rede quando compara-se
+a saída da implementação em 64 bits e usando a função \texttt{tanh()} nativa ao
+sistema e a implementação em 32 bits, usando a tabela de procura com resolução
+0,01 e final em 2. Como verifica-se na Figura~\ref{fig:error-hist}, o maior
+erro obtido está abaixo de 0,05, o que concorda com o esperado\footnote{O maior
+erro cometido para cada neurônio, ou seja, para cada ativação está localizado
+próximo a zero, pois é onde a função tangente hiperbólica possui maior taxa de
+variação (derivada = 1). Um erro de 0,01 nas proximidades da origem, portanto,
+traduz-se num erro de 0,01 na ativação. Se todos os neurônios tiverem suas
+ativações próximas a zero, então o erro no evento considerado será
+aproximadamente $6\times0,01=0,06$. Este valor é aproximado pois não
+considera-se o erro devido ao truncamento na acumulação de um número real em
+uma variável de 32-bits (que varia com a mantissa do número sendo armazenado e
+cujo máximo é $1,2\times10^{-6}$ quando a mantissa se aproxima de 10), que é
+pelo menos 4 ordens de grandeza menor que o erro cometido usando-se uma tabela
+com 0,01 de resolução.}.
+
+\begin{figure}
+\epsimage{0.6}{59 201 543 600}{error-histo}
+\caption{A distribuição dos erros quando compara-se a implementação da tangente
+hiperbólica usando a função nativa ao sistema (64 bits) e uma implementação por
+tabela, de 32 bits, cuja resolução é 0,01 (final em 2,0).}
+\label{fig:error-hist}
+\end{figure}
+
+A Figura~\ref{fig:scatter} mostra um gráfico de dispersão (\eng{scatter plot})
+comparando-se as duas saídas mencionadas. Na legenda na parte superior esquerda
+da figura, é possível ver as componentes do \eng{fitting} linear (usando o método
+dos mínimos quadrados) para aquela distribuição de pontos. Como é possível
+notar, a aproximação é razoavelmente boa mesmo com a baixa resolução da
+tabela. Nessa figura também é possível distinguir que os elementos cujas saídas
+estão próximas a zero estão mais dispersos, confirmando a questão do erro ser
+maior para ativações próximas a zero.
+
+\begin{figure}
+\epsimage{0.6}{56 201 549 600}{scatter}
+\caption{Comparação entre as saídas da rede 58-15-1 quando utiliza-se a
+implementação da tangente hiperbólica usando a função nativa ao sistema (64
+bits) e uma implementação por tabela, de 32 bits, cuja resolução é 0,01 (final
+em 2,0).}
+\label{fig:scatter}
+\end{figure}
+
+\subsubsection{Tempo de processamento}
+
+O tempo de processamento para cada conjunto de 58 anéis (ou seja, para cada
+RoI) varia com o nível de otimização e precisão utilizada nos testes. O tempos
+de execução para cada RoI (em um Pentium II @ 300 MHz) estão listados na
+tabela~\ref{tab:time}. Não há distinções entre as diversas configurações de TP,
+já que o esforço computacional indifere neste caso. Os valores da tabela foram
+obtidos medindo-se o tempo de processamento sobre um total de cem mil iterações
+e computando-se a média. Nesse caso, a medida de tempo é feita para cada
+conjunto de 100.000 iterações já que os recursos no PC impossibilitam uma
+medida precisa de tempo para cada evento individualmente. O erro na medida é
+dado em função da resolução do cronômetro (1$\mu$s) do número de eventos:
+$\epsilon = 1\mu s/\sqrt{100000} \approx 3,16 ns$. A tabela também contém
+a descrição dos \eng{flags} de otimização utilizados durante a compilação.
+
+Na Tabela~\ref{tab:time} nota-se que a diferença entre os diversos tempos é
+bastante grande quando se aplica a otimização automática (via compilador) do
+código, pois o tempo de processamento, neste caso, cai bruscamente. Não há
+diferenças marcantes entre as implementações utilizando tabelas de procura ou
+as funções padrões da biblioteca, quando compara-se o mesmo nível de otimização
+e precisão. Isto se deve ao fato de que cerca de 92\% do tempo é gasto com a
+propagação pela rede. Uma análise de uma sessão de \eng{profiling} do
+discriminador, no entanto, revela que cerca de 6\% do tempo é gasto com a
+ativação quando utiliza-se tabelas de procura e \textbf{apenas} 3\% do tempo de
+processamento é gasto com ativação quando utiliza-se as funções nativas do
+sistema. Das atividades realizadas durante a procura na tabela, 50\% do tempo é
+gasto com a procura da posição correta na tabela\footnote{Isto é feito
+quantizando-se o argumento da função com respeito a resolução da tabela sendo
+utilizada. A posição correta na tabela (índice) é considerada a que está mais
+próxima do valor quantizado.}, que resulta na melhor aproximação para o
+argumento dado. Vale notar, também, que utilizando uma codificação com lógica
+de 64 bits e código otimizado, o sistema é mais rápido que utilizando 32
+bits para o mesmo nível de otimização. Possivelmente, isso se deve às
+características de implementação do compilador para o processador que
+foi utilizado nos testes.
+
+\begin{table}
+\caption{Tempo de processamento médio para cada RoI usando uma rede 58-5-1.}
+\label{tab:time}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|} \hline
+Otimização & Flags & Precisão & Ativação & Tempo \\ \hline \hline
+Não & -g -pg & 32-bits & nativa & $46,12\mu$s \\ \hline
+Não & -g -pg & 32-bits & TP & $46,83\mu$s \\ \hline
+Não & -g -pg & 64-bits & nativa & $55,29\mu$s \\ \hline
+Não & -g -pg & 64-bits & TP & $55,06\mu$s \\ \hline
+Sim & -O3 & 32-bits & nativa & $23,79\mu$s \\ \hline
+Sim & -O3 & 32-bits & TP & $25,68\mu$s \\ \hline 
+Sim & -O3 & 64-bits & nativa & $17,69\mu$s \\ \hline 
+Sim & -O3 & 64-bits & TP & $19,82\mu$s \\ \hline 
+\end{tabular}
+\end{center}
+\end{table}
+
+\section{Implementação em DSP's}
+\label{sec:dsp}
+
+Nesta seção, descreve-se a implementação em linguagem C no ambiente de um
+processador digital de sinais (DSP) de 32 bits e com 25 nanossegundos de ciclo,
+o ADSP-21062 da Analog Devices (veja detalhes deste processador no
+Apêndice~\ref{ap:dsp}). Este DSP pode ser programado usando-se a linguagem C,
+mas possui algumas limitações, por exemplo, o suporte limitado a variáveis
+reais.
+
+Por possuirem um suporte limitado à tarefas mais genéricas de processamento,
+mas grande capacidade de processamento paralelo, os DSP's podem ser alocados
+como processadores auxiliares aos nós de processamento principal do L2. Neste
+caso, deseja-se utilizá-los na tarefa de pré-processamento e discriminação de
+objetos, utilizando os calorímetros do ATLAS e as técnicas descritas no
+Capítulo~\ref{chap:neural}.  Algumas das vantagens de se usar DSP's como
+co-processadores para a discriminação elétron/jato são:
+
+\begin{enumerate}
+\item Os processadores principais ficariam para tarefas menos complexas, que
+não coubessem aos DSP's, como controle de fluxo e algoritmos mais simples e
+sequenciais;
+\item Os DSP's são, em geral, mais baratos e consomem menos energia que os
+processadores convencionais. Isto reduziria a carga sobre estes dispositivos,
+aumentando sua vida útil e reduzindo o consumo geral;
+\item DSP's são especializados em operações do tipo S.I.M.D (\eng{Single
+Instruction, Multiple Data}), vitais nos algoritmos do segundo nível; Neste
+caso, sendo também mais rápidos que processadores convencionais;
+\item DSP's são programáveis em C, o que simplifica o desenvolvimento e
+manutenção dos programas desenvolvidos no contexto do segundo nível de
+filtragem, já produzido em C/C++;
+\item DSP's são especializados em produtos internos, o que é muito conveniente
+para a implementação do discriminador neural,
+\end{enumerate}
+
+No sistema de desenvolvimento que se trabalhou, o DSP está alojado
+em uma placa conectada ao sistema hospedeiro (no nosso caso um PC comum,
+rodando Windows) através de uma interface ISA. Nesta configuração, o DSP não
+possui contato com os recursos de entrada e saída do sistema hospeiro, como os
+discos rígidos e a tela que são necessários para a emulação do decisor local,
+havendo a necessidade de se dividir a aplicação em 2 sub-sistemas
+especializados. O primeiro realiza o discriminador em si, rodando no DSP. O
+segundo será uma aplicação que roda no sistema hospedeiro, com o intuito de
+prover à aplicação no DSP, os recursos necessários à simulação.
+
+\subsection{O hospedeiro}
+
+A comunicação entre as aplicações é feita através de acesso direto à memória do
+DSP, pela aplicação hospedeira. Cuidados extras devem ser tomados para que os
+recursos compartilhados entre o DSP e o sistema hospedeiro (neste caso a
+memória) não se tornem um motivo para o mal-funcionamento do sistema, gerando
+travamentos (\eng{dead-locks}) ou resultados inesperados.
+
+Durante a execução, o hospedeiro verifica se o DSP encontrou problemas em sua
+fase de inicialização, finalização ou operação, de forma automática, reportando
+ao operador da simulação o problema encontrado, assim como alguns detalhes que
+levaram a aplicação ao erro. Desta forma, embora não desfrute dos recursos
+plenos do hospedeiro, o DSP poderá se comunicar com o operador.
+
+O hospedeiro também tem a função de cronometrar o tempo necessário para o
+processamento de cada RoI que é entregue ao DSP. Estas medidas darão bases para
+concluir sobre a velocidade de processamento neste tipo de implementação. Em
+resumo, o hospedeiro executará os seguintes passos:
+
+\begin{enumerate}
+\item Inicializa o DSP;
+\item Carrega a aplicação no DSP;
+\item Abre os arquivos de entrada e saída no hospedeiro;
+\item Configura o discriminador neuronal no DSP;
+\item Inicializa a aplicação no DSP;
+\item Lê todos eventos nos arquivos de entrada e envia-os para o DSP, um-a-um e
+recebe sua saída e o tempo que o DSP levou para executá-la, guardando no
+arquivo de saída todos os dados;
+\item Termina todas as variáveis do programa;
+\item Termina a aplicação no DSP;
+\end{enumerate}
+
+\subsection{A aplicação no DSP}
+
+Desenvolveu-se uma versão do sistema de pré-processamento dos dados de RoI's do
+calorímetro do ATLAS para o ADSP-21062 citado acima. Esta versão do
+pré-processador pode executar:
+
+\begin{enumerate}
+\item Decodificação das células - a decodificação é feita
+basicamente por controle de fluxo;
+\item Organização das células em \eng{Trigger Towers} - nesta fase organiza-se
+os eventos recebidos segundo sua granularidade no ROB. Desta forma, células
+faltantes podem ser identificadas tão pronto um determinado ROB envie seus
+dados;
+\item Verificação da integridade da RoI - nesta etapa tomam-se todos os
+cuidados necessários quanto a completude da RoI. Caso sejam identificadas
+regiões faltantes, é nesta fase que seria possível sua correção;
+\item Cálculo dos anéis baseando-se no centro de deposição de cada camada;
+\item Normalização dos dados de entrada para a rede neuronal;
+\item Discriminação neuronal, utilizando uma rede 58-5-1, conforme descrita
+no Capítulo~\ref{chap:neural} (teste 17 da Tabela~\ref{tab:ring-neural});
+\end{enumerate}
+
+A Figura~\ref{fig:flow} mostra um fluxograma dos passos descritos, mostrando a
+troca de mensagens entre o sistema hospedeiro e a aplicação no DSP, assim como
+as medidas tomadas para estimar o tempo de processamento, tanto da aplicação no
+DSP quanto para a troca de mensagens entre o sistema hospedeiro e o DSP. Nessa
+figura, é possível entender a complexidade adicional ao envolvermos um nó de
+processamento auxiliar no sistema.
+
+Na implementação da rede neuronal (passo 6), utilizou-se como função de ativação
+a implementação da função tangente hiperbólica nativa do DSP. Optou-se por esta
+alternativa pois o tempo de execução do classificador neuronal representa
+somente cerca de um milésimo do tempo que o algoritmo de pré-processamento de
+dados leva para executar. Desta forma, o provável ganho em tempo de execução
+não justificaria o aumento na complexidade da aplicação.
+
+\begin{figure}
+\epsimage{0.8}{0 0 506 615}{preproc}
+\caption{Um fluxograma mostrando a atuação conjunta da aplicação hospedeira com
+a aplicação no DSP. Este diagrama mostra também os pontos que foram utilizados
+como referências nas medidas de tempo.}
+\label{fig:flow}
+\end{figure}
+
+\subsection{Resultados da implementação}
+
+Para verificar o funcionamento da implementação do decisor local no DSP,
+comparou-se suas saí\-das com as do processo \eng{off-line}. A
+Figura~\ref{fig:dsp-out} mostra as diferenças entre as saídas geradas pelo
+decisor local rodando no DSP e a versão \eng{off-line} com 64-bits de precisão
+e implementação da ativação neuronal usando a função tangente hiperbólica
+nativa do sistema. Como é possível observar nessa figura, o erro médio é
+bastante pequeno e compatível com o que foi observado na
+Tabela~\ref{tab:lut-prec}.
+
+\begin{figure}
+\epsimage{0.65}{59 196 546 600}{dspout}
+\caption{Histograma mostrando a diferença entre a saída da aplicação
+\eng{off-line} e o decisor local rodando no DSP.}
+\label{fig:dsp-out}
+\end{figure}
+
+A Figura~\ref{fig:dsp-time} mostra uma distribuição do tempo que o decisor
+local leva para executar no DSP para cerca de 600 eventos. A figura foi obtida
+medindo-se o tempo de execução da aplicação no DSP através de variáveis
+internas e transmitindo o resultado ao sistema hospedeiro. A
+Figura~\ref{fig:flow} mostra em que momentos o cronômetro do DSP foi
+inicializado e parado (\eng{DSP timer}). 
+
+A média para o tempo de processamento de 1,22 ms representa a décima-terceira
+parte do que foi encontrado para a versão \eng{off-line} do sistema! Este tempo
+está enquadrado dentro do que é desejável para um decisor local real, já que o
+tempo de processamento por evento do ATLAS não deverá exceder ao valor de 10 ms
+(Capítulo~\ref{chap:l2}). A flutuação encontrada no tempo de processamento se
+deve a variações no tamanho (número de células) das RoI's analisadas.
+
+\begin{figure}
+\epsimage{0.65}{64 196 550 600}{dsptime}
+\caption{Tempo de execução do decisor local em um ADSP 21061 da Analog
+Devices.}
+\label{fig:dsp-time}
+\end{figure}
+
+

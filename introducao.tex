@@ -1,0 +1,172 @@
+\chapter{Introdução}
+\label{chap:intro}
+
+Sistemas de filtragem são necessários em ambientes onde se deseja separar o
+sinal de interesse de uma grande quantidade de outros sinais
+ordinários. Geralmente, existem restrições no tempo de execução para este
+tipo de processamento, pois os sistemas de filtragem operam, freqüentemente, em
+ambientes que geram altas taxas de eventos. Eventualmente, os eventos gerados
+podem requerer uma quantidade de memória elevada, exigindo uma discriminação
+\eng{on-line} de alta velocidade e tornando todo o processo de filtragem ainda
+mais complexo.
+
+As soluções procuradas nestes sistemas devem, via-de-regra, incluir:
+\begin{itemize}
+\item A utilização de métodos de discriminação muito eficientes;
+\item A simplicidade na implementação (mapeamento em \eng{hardware} ou
+\eng{software});
+\item Flexibilidade de programação, alteração do código e parâmetros de
+funcionamento;
+\item Velocidade compatível com o sistema-alvo;
+\item Robustez, no caso do sistema funcionar por longo período;
+\item Integrabilidade, no caso do filtro funcionar em conjunto com outros
+sistemas de filtragem.
+\end{itemize}
+
+\section{Contexto}
+\label{sec:intro-contexto}
+
+Todos os requisitos acima são tipicamente encontrados na filtragem de eventos
+para experimentos com colisionadores de partículas de altas energias. Em
+especial, no ATLAS (\eng{A Toroidal LHC ApparatuS}), um laboratório de deteção
+para o experimento colisionador de última geração, LHC (\eng{Large Hadron
+Collider}), a se tornar funcional no CERN, Suíça, em 2005, o sistema de
+filtragem deverá atender a taxas de eventos jamais atingidas. Cerca de 40
+milhões de eventos serão gerados por segundo, e cada um destes possuirá cerca
+de 1 \eng{megabyte} de dados, produzindo-se, portanto, 40 \eng{gigabytes} de
+dados por segundo. Esta taxa não pode ser gravada em mídia permanente e, mesmo
+que pudesse, não seria viável sua análise \eng{off-line}, pois o sinal de
+interesse para a experiência estaria imerso numa densa quantidade de eventos
+que formam o ruído de fundo da experiência. Sendo assim, é necessário
+projetar-se um sistema de filtragem eficiente e suficientemente rápido, que
+consiga reduzir a taxa de eventos do ATLAS para valores mais realísticos.
+
+A física de interesse no experimento LHC é o bóson de Higgs. Esta partícula
+poderá ser observada no ATLAS umas poucas vezes ao longo de vários dias, nas
+suas condições de operação. O Higgs (se existir), além de raro, é extremamente
+instável, decaindo em partículas mais estáveis e menos energéticas durante sua
+interação com o laboratório ATLAS. O sistema de filtragem deverá identificar os
+padrões de decaimento do Higgs (sinal) para poder localizá-lo na massa de
+eventos com física ordinária, produzida pelas interações mal-sucedidas
+(interações que não produzem o Higgs, mas sim canais físicos já conhecidos e
+que, portanto, significam ruído) durante o experimento.
+
+O sistema de filtragem do experimento ATLAS é composto de 3 níveis conectados
+em cascata, com complexidade e tempo de processamento crescentes. O primeiro
+nível será basicamente implementado em \eng{hardware} de baixa
+programabilidade, reduzindo a taxa de eventos de entrada para não mais que 100
+mil por segundo (100 kHz). O terceiro nível será implementado com processores
+comuns (PC's) interligados por redes rápidas. 
+
+O segundo nível de fitragem (L2), em especial, deve reduzir a taxa de eventos
+dos 100.000 por segundo, que lhe será entregue pelo primeiro nível, para não
+mais que 1.000 eventos por segundo. Para isto, contará com uma rede de
+computadores que processarão algoritmos de busca especializados nos diversos
+sub-detetores do ATLAS. Esta busca visa encontrar elementos que representem
+decaimentos do bóson de Higgs.
+
+Dentre os algoritmos especializados, encontram-se os algoritmos separadores de
+elétrons e jatos, que se baseiam em dados dos \emph{calorímetros} do ATLAS. Os
+calorímetros são equipamentos respon\-sá\-veis por medir a energia de
+partículas, sendo capazes de produzir uma resposta rápida e de permitir uma
+discriminação eficiente das partículas que com ele interagem. Elétrons podem
+representar a física de interesse do experimento e estão contidos em cerca de
+60\% das prováveis \emph{assinaturas} de Higgs.
+
+\section{Implementação}
+\label{sec:intro-implem}
+
+Neste trabalho, implementa-se um sistema de discrimina\-ção neuronal
+e\-lé\-tron-jato para o segundo nível de filtragem do ATLAS, basendo-se nos
+dados de seus calorímetros. Os dados de cada objeto (elétron ou jato)
+correspondem a uma pequena parte do detetor completo, aquela efetivamente
+sensibilizada pela interação física dos sub-produtos gerados na colisão. Isto
+representa uma matriz tri-dimensional de células. Cada camada da matriz possui
+uma granularidade característica. O número de células total, por objeto a ser
+discriminado estará, em torno de 1000.
+
+Para reduzir a elevada dimensão dos sinais de entrada, inspirou-se no
+conhecimento da física do experimento e aplicou-se um processamento em soma de
+anéis concêntricos de energia, construídos ao redor dos picos de deposição
+energética nas camadas, resultando em um total de 58 quantidades que possam
+descrever o fenômeno.
+
+O vetor de entrada, agora com 58 componentes, alimenta uma rede neuronal
+totalmente conectada, com apenas 1 neurônio na saída, que realiza a
+discriminação entre elétrons e jatos. A rede foi treinada com diferentes
+parâmetros, visando encontrar a melhor configuração de discriminação. Para o
+critério de parada, ao invés de utilizar-se o Erro Médio Quadrático (EMQ),
+utilizou-se uma quantidade que se baseia na eficiência de discriminação
+elétron/jato, já que a ênfase para o processamento neuronal é no reconhecimento
+de padrões.
+
+Após vários testes, confirmou-se que uma rede com 5 neurônios na camada
+intermediária poderá efetuar a separação elétron/jato com 97\% de eficiência na
+discriminação de elétrons, para menos de 5\% na probabilidade de falso alarme, a
+qual corresponde à probabilidade com que jatos venham a ser erroneamente
+classificados como elétrons.
+
+Para tentar reduzir ainda mais a dimensão de entrada da rede classificadora,
+apresenta-se um estudo da relevância de cada entrada do discriminador
+neuronal. Para fazê-lo, substituiu-se o valor de cada variável de entrada (um
+dos 58 anéis formados) pelo seu valor médio, avaliando o impacto dessa
+substituição na resposta do classificador e, portanto, o significado de cada
+componente do vetor de entrada para o processo de discriminação.
+
+Com base nesta análise, variáveis cujas relevâncias venham a ser menores que um
+dado patamar podem ser eliminadas da entrada. A partir dos sub-conjuntos das
+variáveis de entrada, cada um tomado em relação a um patamar de eliminação das
+variáveis menos relevantes, novos discriminadores neuronais mais compactos com
+20 ou até 5 entradas foram propostos, conseguindo-se manter um desempenho
+superior, em relação ao método clássico desenvolvido pela comunidade no
+CERN. Um discriminador com 5 dos 58 anéis iniciais, e tendo apenas 4 neurônios
+na camada intermediária, consegue cerca de 95\% de eficiência na classificação
+de elétrons, contra apenas 5\% de falso alarme.
+
+Na fase atual de desenvolvimento do sistema de filtagem do ATLAS, o
+discriminador operará dentro de um ambiente de emulação, desenvolvido com nossa
+participação, de forma que este sistema seja independente da plataforma na qual
+é executado (\eng{Software} de Referência). Este ambiente é implementado
+usando-se o paradigma da Orientação a Objetos (OO) e provê várias vantagens ao
+sistema de filtragem, embora determine também algumas restrições de
+funcionamento. O sistema que foi desenvolvido, embora não totalmente conforme,
+implementa uma parte significativa das restrições de operação propostas pelo
+\eng{Software} de Referência e utiliza também algumas de suas vantagens, como
+será visto.
+
+Por fim, o método de discriminação neuronal baseado em anéis foi implementado
+na tecnologia dos processadores digitais de sinais (DSP's). Testes de
+desempenho mostram que todo o processamento exigido poderá ser executado em
+aproximadamente 1 ms, mantendo a acurácia necessária e cumprindo todos os
+requisitos essenciais do sistema de filtragem do ATLAS.
+
+\section{Visita guiada}
+
+O trabalho está divido em outros 6 capítulos. No Capítulo~\ref{chap:fisica},
+descreve-se o detetor ATLAS em detalhes, assim como conceitos de calorimetria e
+do sistema de filtragem de eventos são fornecidos, em linhas gerais. No
+Capítulo~\ref{chap:l2}, detalha-se o segundo nível de filtragem do ATLAS, berço
+dos discriminadores elétron-jato desenvolvidos, explicando a importância na
+deteção de elétrons e as limitações técnicas do problema.
+
+O Capítulo~\ref{chap:refsoft} introduz o \eng{Software} de Referência, um
+sistema complexo de emulação do L2. Nesse capítulo, mostra-se ao leitor os
+detalhes de implementação do sistema de filtragem e justificam-se as escolhas
+com relação ao tipo de processamento e a abordagem orientada a objetos. O
+Capítulo~\ref{chap:neural} aborda o problema da discriminação neuronal na
+classificação elétron/jato, avaliando as diferentes configurações e enfoques de
+treinamento da rede. Esse capítulo também detalha o pré-processamento dos dados
+de entrada em anéis concêntricos ao pico de energia e o estudo de relevância
+das entradas, como forma de redução adicional da dimensionalidade do sinal de
+entrada.
+
+No Capítulo~\ref{chap:impl}, uma visão mais detalhada da implementação de um
+decisor local é dada, utilizando as configurações discutidas nos capítulos
+anteriores. Nesse capítulo, discute-se também a implementação do decisor local
+em um processador digital de sinais (DSP). Medidas de tempo e acuidade são
+discutidas. O Capítulo~\ref{chap:conclusao} conclui este documento, sumarizando
+os principais pontos do trabalho e resultados conseguidos. No final desse
+capítulo, possíveis extensões deste trabalho são discutidas.
+
+
+

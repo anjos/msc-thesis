@@ -1,0 +1,283 @@
+\chapter{Conclusões}
+\label{chap:conclusao}
+
+Neste trabalho, apresentou-se, para o experimento ATLAS, um discriminador
+neuronal elétron/jato que representa, tanto em tempo de execução quanto em
+classificação, uma opção mais eficiente para o segundo nível do sistema de
+filtragem de eventos \eng{on-line} do experimento.
+
+O detetor ATLAS (Capítulo~\ref{chap:fisica}) é um complexo laboratório que tem
+por objetivo a deteção do raro bóson de Higgs. Para isto, se utiliza de
+modernas técnicas de deteção e conta com o auxílio de um sistema de filtragem
+de eventos muito eficiente, que reduzirá a taxa de eventos inicial de 40 MHz
+para cerca de 10 a 100 Hz, eliminando, durante essa filtragem, eventos que
+indicam a ocorrência de física ordinária (ruído), mas mantendo aqueles eventos
+que, potencialmente, representem decaimentos de bósons de Higgs (sinal).
+
+O sistema de filtragem para o experimento é composto de 3 níveis que estão
+conectados em cascata, com complexidade e tempo de processamento de eventos
+crescente. O primeiro nível (L1) tem por objetivo eliminar os eventos
+baseando-se na ocorrência de alguns objetos, enquanto os níveis posteriores
+(segundo e terceiro) farão a eliminação analisando cada evento como um todo. O
+primeiro nível, enquanto filtra, seleciona as regiões nos detetores (RoI's) nas
+quais o detetor foi sensibilizado. Esta informação é utilizada para iniciar os
+demais níveis de filtragem.
+
+O segundo nível de filtragem (Capítulo~\ref{chap:l2}) é o primeiro da série
+filtros que analisará o evento tendo em vistas suas características
+globais. Para cada objeto destacado no primeiro nível (RoI), o segundo nível
+executará rotinas de classificação, visando confirmar os objetos destacados
+pelo primeiro nível e, assim, classificar um evento. Dentre os objetos mais
+importantes para o experimento ATLAS, encontram-se os elétrons, representando
+cerca de 60\% dos objetos que serão analisados pelo L2. Elétrons, por sua vez,
+são comumente falseados por jatos, quando esses decaem de forma
+similar. Portanto, um classificador elétron/jato mais eficiente se faz
+necessário no segundo nível (L2).
+
+O classificador elétron/jato tem o objetivo de discriminar jatos e elétrons,
+preservando o máximo de elétrons que for possível, já que estas partículas são
+portadoras da informação que se deseja detetar no ATLAS: o bóson de
+Higgs. Elétrons e jatos são comumente distinguidos pela forma que depositam
+energia nos calorímetros do ATLAS (Capítulo~\ref{chap:neural}). Jatos, por
+serem um conglomerado de partículas hadrônicas, usualmente penetram com mais
+profundidade nos calorímetros, também produzindo uma cascata mais espalhada,
+enquanto elétrons produzem cascatas menores e mais colimadas
+(Figuras~\ref{fig:eroi}, \ref{fig:jroi} e \ref{fig:ejet}).
+
+\section{Somas em anel}
+
+Métodos clássicos de deteção aproveitam-se das características físicas da
+deposição de energia nos calorímetros para obter uma alta eficiência de
+classificação (95\% para elétrons e 88,4\% para jatos, como visto na
+Seção~\ref{sec:bi-results}), extraindo quatro variáveis físicas com alto poder
+de discriminação. Os métodos clássicos, no entanto, desconsideram jatos que
+possuem um padrão de decaimento extremamente semelhante ao de elétrons, e se
+diferenciam apenas por sutilezas no seu processo de interação com os
+calorímetros do ATLAS. Para classificar corretamente estes eventos, um sistema
+tão simplificado não pode ser empregado.
+
+Embora não seja uma solução que aproveite-se da máxima granularidade dos
+calorímetros do ATLAS, a discriminação usando as quatro variáveis clássicas
+compacta o vetor de entrada de cerca de 1000 células para 4 quantidades,
+mantendo um bom desempenho. Re-avaliando o espaço de entrada inicial (as 1000
+células) e observando-se a física de decaimento dos objetos de interesse, no
+entanto, é possível elaborar um sistema também compacto, mas que preserve
+melhor as diferenças nos padrões de decaimento entre as duas classes de
+partículas. Nesse novo sistema, identifica-se o pico de deposição energética em
+cada camada e executa-se um procedimento de soma em anéis concêntricos
+(Seção~\ref{sec:aneis}), formando-se um total de 58 novas variáveis, que
+representam o objeto de maneira mais atraente para um classificador.
+
+Projetando-se, então, um classificador neuronal para este novo espaço de
+entrada (de dimensão 58), é possível obter uma eficiência de classificação
+bastante acima do que foi obtido usando-se as quatro variáveis discutidas. A
+figura~\ref{fig:test17} mostra a curva característica do Teste 17 da
+Tabela~\ref{tab:ring-neural}, quando comparada ao melhor discriminador neuronal
+utilizando as quatro variáveis clássicas e ao discriminador linear, também para
+variáveis clássicas. Como é possível ver nessa figura, a eficiência de
+classificação usando anéis é bastante superior àquelas usando as quantidades
+clássicas.
+
+\begin{figure}
+\epsimage{0.65}{56 201 549 600}{efficiency-17}
+\caption{Eficiência comparativa entre o melhor discriminador usando 58 anéis e
+aqueles baseados nas quatro quantidades físicas.}
+\label{fig:test17}
+\end{figure}
+
+\section{Relevância}
+
+O espaço gerado a partir das 58 somas em anel pode ainda ser reduzido,
+observando-se a relevância (Seção~\ref{sec:relevance}) de cada uma das entradas
+para o classificador neuronal proposto. A relevância, como foi visto, mede o
+impacto na classificação, quando substitui-se uma das variáveis de entrada pela
+estimativa de sua média estatística.
+
+Aplicando-se o estudo de relevância, tanto aos classificadores baseados nas
+variáveis clássicas quanto aqueles baseados nas somas em anéis, é possível ver
+que nem todas as variáveis disponíveis para a classificação são, de fato,
+relevantes para o discriminador neuronal. Para o caso das variáveis clássicas,
+a remoção da variável \rstrip\ e o treinamento de um novo classificador (agora
+baseado em um novo espaço tri-dimensional) não demonstra um impacto profundo no
+poder de classificação de elétrons e jatos, como é possível notar na
+Figura~\ref{fig:class-relev-best}.
+
+No classificador baseado nas somas em anel, a redução da dimensão do espaço de
+entrada, de 58 para 20 (eliminando 38 anéis!) também não influencia de forma
+significativa (Figura~\ref{fig:eff-cut1}) a discriminação elétron/jato. Algum
+impacto, no entanto, pode ser observado continuando-se a reduzir a
+dimensionalidade do espaço de entrada. Ainda assim, classificadores com apenas
+5 dos 58 anéis mantiveram desempenho acima do melhor desempenho que foi obtido
+com as 4 variáveis clássicas usando um neuronal
+(Figura~\ref{fig:last-effic}). Estes resultados indicam que há melhores
+maneiras de compactar os dados de uma RoI, de forma a discriminar mais
+eficientemente elétrons e jatos.
+
+O excelente desempenho dos discriminadores baseados nas somas em anel advém do
+aproveitamento da máxima granularidade do detetor, sem que as sutilezas nos
+padrões de decaimento dos objetos sejam perdidas, o que não é possível observar
+quando aplica-se o estudo com as variáveis clássicas. Esta compactação em
+anéis, ademais, permite um estudo mais detalhado da relevância das diversas
+camadas dos calorímetros do ATLAS, quando expostas ao problema da discriminação
+de objetos e.m.. Através deste estudo, é possível estabelecer critérios de
+simplificação (cortes de dimensionalidade) do discriminador de forma a torná-lo
+suficientemente rápido, mas ainda mantendo uma eficiência de discriminação
+acima das possíveis soluções com o sub-espaço de variáveis clássicas, como foi
+possível observar na Figura~\ref{fig:last-effic}.
+
+A \textbf{não} utilização dos dados da terceira camada e.m. dos calorímetros
+não impediu que uma eficiência maior fosse atingida, utilizando a soma em
+anéis. Possivelmente, a inclusão dos dados desta camada em estudos posteriores
+possa mostrar uma melhora significativa no método proposto, acentuando ainda
+mais as diferenças entre o método de discriminação hoje empregado no segundo
+nível de filtragem do ATLAS e aquele desenvolvido neste trabalho.
+
+\section{Implementação}
+
+A implementação do sistema de decisão local \eng{off-line}, baseado nas somas
+em anel, revelou que grande parte do tempo de pré-processamento de dados (cerca
+de 87\%), fase que antecede a filtragem propriamente dita, é gasto com a
+aquisição de dados (Figura~\ref{fig:pie}), e que apenas 6\% deste tempo é gasto
+com a soma em anéis. Estas estimativas indicam que mesmo um sistema baseado em
+um pré-processamento mais simples, como aquele usando as quatro variáveis
+clássicas, terá problemas com relação à latência (de eventos) no segundo nível
+de filtragem, atualmente estimada em 10 ms. Além disso, estas estimativas
+indicam também que os esforços para reduzir o tempo de processamento do decisor
+local (para objetos e.m.) devem ser focalizados na aquisição de dados para esta
+parte do sistema de filtragem e não com a classificação dos objetos
+propriamente dita que, como foi visto, pode ser executada de forma extremamente
+veloz usando-se um sistema neuronal, mesmo quando utiliza-se um PC e não se
+aplica a otimização automática na compilação do código (Tabela~\ref{tab:time}).
+
+Neste contexto, a utilização de tabelas (\eng{Look-up tables}) não se mostra
+necessária, já que os cálculos que podem ser baseados neste método
+representarão uma ínfima parte do tempo global de processamento. Por outro
+lado, a tecnologia de processamento a ser utilizada no sistema de decisão local
+representará um fator extremamente importante para o segundo nível: a simples
+conversão das rotinas de filtragem \eng{off-line} implementadas para que rodem
+em um DSP (Apêndice~\ref{ap:dsp}) reduziu o tempo de processamento de 13 ms
+para cerca de 1 ms (Figura~\ref{fig:dsp-time})! É possível que com poucos
+ajustes e utilizando funções nativas ao DSP, seja possível atingir uma redução
+ainda maior no tempo de processamento do decisor neuronal local, tornando-o uma
+opção ainda mais atraente para o segundo nível de filtragem.
+
+Lembra-se ao leitor que esta é a primeira vez que um sistema tão completo em
+termos de decisão local é implementado. Em \cite{caloalgo}, um sistema menos
+complexo de classificação de objetos e.m. foid desenvolvido, tendo por base as
+quatro variáveis clássicas. Esta versão foi capaz de executar a filtragem do
+evento em cerca de 50 $\mu$s, usando um Pentium II @ 300 MHz. Comparando-se
+este resultado com o obtido para o classificador neuronal (aproximadamente 18
+$\mu$s), foi possível perceber que a classificação proposta neste trabalho,
+além de mais eficiente, é também mais veloz. O pré-processamento dos dados, sem
+verificação de integridade dos dados recebidos e descontando-se o tempo de
+aquisição levará cerca de 175 $\mu$s na versão usando as quatro variáveis
+clássicas, ainda segundo \cite{caloalgo}. Estimando que apenas 6\% do tempo é
+gasto com a extração das somas em anel (``pré-processamento" equivalente ao
+proposto pelo trabalho citado), o tempo gasto para a mesma atividade é de cerca
+de 780 $\mu$s, ou seja, cerca de 4,5 vezes maior. Ainda assim, lembra-se ao
+leitor que a versão que se está utilizando para comparação não foi
+otimizada. Em uma versão mais otimizada do sistema, rodando em um DSP com
+apenas 40 Mhz de clock (ADSP-21062 da Analog Devices, Apêndice~\ref{ap:dsp}), o
+extração das somas em anel equivaleria a 60 $\mu$s, ou seja, $1/3$ do tempo da
+versão apresentada em \cite{caloalgo}, considerando-se a projeção percentual do
+tempo vista na Figura~\ref{fig:pie}.
+
+O sistema implementado poderá ser facilmente integrado ao \eng{Software} de
+Refência (Capítulo~\ref{chap:refsoft}), como foi explanado na
+Seção~\ref{sec:daq}. Este ambiente inclui uma completa interface de emulação do
+segundo nível de filtragem do ATLAS, fornecendo também, meios mais acurados de
+comparação entre as diversas opções de processamento disponíveis atualmente.
+
+\section{Extensões}
+
+Nesta seção, discute-se possíveis extensões para este trabalho, com o intuito
+de melhorar os resultados obtidos aqui ou reduzir o tempo de processamento
+necessário para a correta classificação de objetos e.m., no contexto do segundo
+nível de filtragem do ATLAS:
+
+\begin{enumerate}
+\item No trabalho apresentado não efetuou-se um estudo para a inclusão dos
+dados da terceira camada e.m.. A anexação desta parte do calorímetro poderá
+aumentar a capacidade de filtragem (usando redes neuronais) do decisor
+local. Para isto, deve-se averiguar como tratar situações onde há mudanças de
+granularidade dentro da própria camada (Figura~\ref{fig:intdec}), de forma a
+aplicar a compactação resultantes das somas em anel. Tanto a interpolação
+quanto a decimação podem ser soluções favoráveis. Este estudo também permitirá
+que RoI's cujo o centro está em $|\eta|>1,1$ possam ser avaliadas pela técnica
+de classificação neuronal aqui proposta;
+
+\item A redução do número de anéis usando-se o método da relevância poderá
+diminuir ainda mais o tempo de pré-processamento (incluindo a aquisição de
+dados), aliviando a carga no segundo nível de filtragem, mas mantendo o
+desempenho do discriminador. Uma das possíveis extensões deste trabalho poderá
+averiguar o impacto no tempo de processamento e na robustez, decorrentes da
+redução do número de anéis utilizado para a discriminação. A redução da
+dimensão do vetor de entrada para o classificador neuronal também poderá
+simplificar o estudo do ítem~1 desta lista, já que regiões que deveriam sofrer
+ajuste de granularide podem não ser tão relevantes à classificação, podendo,
+portanto, ser eliminadas para este efeito;
+
+\item Para realizar estudos mais elaborados quanto ao tempo de processamento do
+decisor local, deve-se portar a aplicação proposta para dentro do \eng{Software
+de Referência}, como proposto acima.
+
+\item O pré-processamento dos dados usando a soma em anéis é uma atividade
+paralelizável, à medida que as diversas camadas do calorímetro podem ser
+processadas de forma independente. Portanto, a utilização de um ambiente
+multi-processado, preferencialmente com DSP's, poderá diminuir
+significativamente o tempo de processamento para o decisor local;
+
+\item A Figura~\ref{fig:relevs} mostra os valores da relevância, de cada
+entrada, para o processo de classificação de objetos e.m., quando utilizou-se
+diversos tipos de normalização. Como foi visto, há um desequilíbrio bastante
+grande na ênfase que os diversos classificadores dão às entradas, indicando,
+possivelmente, que nenhuma das soluções estudadas representa a forma ótima de
+normalização dos dados. Estudos utilizando soluções híbridas de normalização
+devem ser conduzidos procurando o enfoque ótimo para esta etapa do
+pré-processamento;
+
+\item Os dados utilizados no trabalho exposto não incluem efeitos de
+empilhamento, como enfatizado na Seção~\ref{sec:inputdata}. As próximas etapas
+devem incluir eventos com este tipo efeito, para que seja possível estimar o
+desempenho do sistema de validação quando da operação plena (alta luminosidade)
+do colisionador LHC;
+
+\item Como colocado na Seção~\ref{sec:falta}, uma forma de tratamento de dados
+faltantes deverá ser introduzida no sistema, gerando um classificador mais
+robusto, com capacidade atender as reais expectativas do segundo nível de
+filtragem do ATLAS;
+
+\item Nesse trabalho, utilizou-se a soma em anéis não-circulares ou quadradados
+para a compactação dos dados de entrada do decisor local. Uma possibilidade a
+ser averiguada é a compactação da informação da RoI em anéis circulares. Nesta
+modalidade, a soma em anéis respeita raios crescentes em relação ao centro de
+deposição energética de cada camada. A energia das células é dividida de forma
+ponderada pela contribuição da área da célula em cada anel a que pertence;
+
+\item A utilização do produto SP como figura de mérito para o treinamento e
+avaliação do desempenho de uma rede neuronal leva em conta somente um ponto na
+curva característica do detetor, como foi visto no
+Capítulo~\ref{chap:neural}. Uma forma mais eficiente de mensurar o desempenho
+da rede neuronal pode ser proposto observando-se a área abaixo da curva
+característica. Esta área é tão maior quanto mais eficiente é o discriminador e
+pode ser considerado uma figura de mérito mais robusta, pois leva em conta não
+somente um ponto na curva característica, mas um conjunto de pontos. A
+avaliação da área também pode ser reduzida a um determinado espaço de operação,
+já que usualmente baixas eficiências de discriminação não são relevantes. Desta
+forma, o cálculo da nova figura de mérito pode ser feito de forma mais rápida e
+o discriminador encontrado ao final do treinamento melhor sintonizado para as
+necessidades do processo a que se destina.
+
+A área abaixo da curva característica do detetor também pode ser usada para a
+definição de um novo critério que estude a importância (ou relevância) das
+variáveis de entrada para o discriminador. O aumento dessa área resultante da
+substituição da variável por sua média indica maior importância na
+discriminação, enquanto que a diminuição desta área, menor importância. Este
+critério poderá indicar variáveis que são muito, pouco ou até anti-relevantes à
+discriminação, o que não é possível realizar utilizando diretamente o critério
+da relevância exposto aqui.
+
+\end{enumerate}
+
+
+

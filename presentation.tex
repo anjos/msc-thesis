@@ -1,0 +1,461 @@
+\typeout{Apresentacao de Tese de Mestrado, usando Foiltex.}
+\typeout{ Andre Rabello dos Anjos <Andre.Rabello@ufrj.br>}
+\typeout{--}
+
+\documentclass[20pt,headrule,footrule,dvips,landscape]{foils}
+
+%% -----------------------------------------
+%% Lista de Pacotes que você deverá precisar
+%% -----------------------------------------
+\usepackage[english,portuges]{babel} % Para hifenação automática do português.
+\usepackage[latin1]{inputenc} % Para tradução automática de acentos p/ LaTeX.
+\usepackage[final]{graphicx} % Para incluir figuras EPS.
+\graphicspath{{figures/}}
+\usepackage{color} % Para escrever algumas coisas coloridas.
+%\usepackage{html} % Para usar os comandos pre-definidos por latex2html
+\usepackage{multirow} % Para ter múltiplas linhas por coluna
+\usepackage{hhline} % Para linhas mais interessantes em artigos
+\usepackage{array} % para tabelas mais legais
+\usepackage{tabularx} % para tabelas mais legais
+\usepackage{amssymb} % Para os símbolos matemáticos. Coloque antes de amsmath
+\usepackage{amsmath} % Para as fórmulas e ambientes.
+\usepackage{alltt} % Para entrada verbatim com comandos LaTeX
+%\usepackage{draftcopy} % Para imprimir DRAFT na diagonal em cada página do .ps
+\usepackage{fancybox} % Para caixas decorativas
+
+% Defines the title page
+\title{Sistema Neuronal Rápido de Decisão Baseado em Calorimetria de Altas Energias}
+\author{André Rabello dos Anjos}
+
+\newcommand{\hoje}{16 de abril de 2001}
+\date{\hoje}
+
+% The colors I will use
+\definecolor{azul}{rgb}{0.2,0.2,0.8}
+\definecolor{verde}{rgb}{0,0.4,0}
+
+% The environments
+\newcommand{\eng}[1]{\foreignlanguage{english}{\emph{#1}}}
+\newcommand{\fr}[1]{\foreignlanguage{french}{\emph{#1}}}
+
+%% Alguns atalhos
+\newcommand{\eiro}{$^{\underline{o}}$} % Desenha o 'o.' do 1o.
+\newcommand{\eira}{$^{\underline{a}}$} % Desenha o 'a.' de 1a.
+\newcommand{\expo}[2]{$#1^{#2}\/$} % exponencia o 1o. arg com o 2o.
+\newcommand{\raw}[1]{{\tt #1}} % Vai para modo truetype (raw text)
+
+%% Alguns comandos
+\newcommand{\transp}[1]{\foilhead[-1.8cm]{\color{verde}{\shadowbox{#1}}}}
+\newcommand{\rottransp}[1]{\rotatefoilhead[-1.8cm]{\color{verde}{\shadowbox{#1}}}}
+
+% Defines what is going to be around the slide
+\MyLogo{\includegraphics[bb=154 460 429 549]{logolps}}
+\Restriction{}
+\leftheader{COPPE/EE/UFRJ -- LPS}
+\rightheader{\quad\textsf{\hoje}}
+
+\begin{document}
+
+\maketitle
+
+%%%%%%%%%%%
+%% Slide 01
+%%%%%%%%%%%
+\transp{Conteúdo}
+\MyLogo{André Rabello dos Anjos \color{azul}{\texttt{$<$Andre.Rabello@ufrj.br$>$}}}
+
+\begin{enumerate}
+\item Introdução
+\item Segundo Nível de Filtragem do ATLAS
+\item \eng{Software} de Referência
+\item Decisor Neuronal
+\item Implementação
+\item Conclusões
+%\item Extensões
+\end{enumerate}
+
+%%%%%%%%%%%
+%% Slide 02
+%%%%%%%%%%%
+%%\transp{LEP}
+%%\begin{center}
+%%\includegraphics[bb=0 0 580 386,scale=0.9]{lep-under}
+%%\end{center}
+
+%%%%%%%%%%%
+%% Slide 02
+%%%%%%%%%%%
+\rottransp{ATLAS}
+\begin{center}
+\includegraphics[bb=0 0 629 449,scale=0.7]{atlas-andre}
+\end{center}
+Características:
+\begin{enumerate}
+\item Energia no impacto: 16 TeV;
+\item Freqüência: 40.000.000 de colisões por segundo (25 ns);
+\item Luminosidade: $10^{-34}\text{cm}^{-1} \cdot s^{-1}$.
+\end{enumerate}
+
+%%%%%%%%%%%
+%% Slide 03
+%%%%%%%%%%%
+\rottransp{Granularidade}
+\begin{center}
+\includegraphics[bb=0 0 443 379,scale=0.8]{lar-square}
+\end{center}
+
+\begin{center}
+\includegraphics[bb=0 0 777 466,scale=0.4]{tilecell}
+\end{center}
+
+%%%%%%%%%%%
+%% Slide 04
+%%%%%%%%%%%
+%\transp{Colisões}
+%\begin{center}
+%\includegraphics[bb=0 0 386 356,scale=0.9]{higgs-cms}
+%\end{center}
+
+%%%%%%%%%%%
+%% Slide 04
+%%%%%%%%%%%
+\rottransp{Sistema de Filtragem}
+\begin{center}
+\includegraphics[bb=14 14 477 437]{trigger-sketch}
+\end{center}
+
+%%%%%%%%%%%
+%% Slide 07
+%%%%%%%%%%%
+%\transp{Nós de Processamento}
+%\begin{center}
+%\includegraphics[type=eps,ext=.eps,bb=64 201 554 600,scale=0.8]{l2time}
+%\end{center}
+
+%%%%%%%%%%%
+%% Slide 05
+%%%%%%%%%%%
+\transp{Segundo Nível}
+\begin{center}
+\includegraphics[bb=0 0 744 598,scale=0.58]{L2-sketch}
+\end{center}
+
+%%%%%%%%%%%
+%% Slide 09
+%%%%%%%%%%%
+%\rottransp{Decisão Local}
+%\begin{center}
+%\includegraphics[type=eps,ext=.eps,bb=0 0 390 583,scale=0.9]{em-flow}
+%\end{center}
+
+%%%%%%%%%%%
+%% Slide 06
+%%%%%%%%%%%
+\transp{\eng{Software} de Referência}
+\begin{center}
+\includegraphics[bb=0 0 580 236]{refsoft-layers}
+\end{center}
+
+%%%%%%%%%%%
+%% Slide 07
+%%%%%%%%%%%
+\rottransp{Abstração}
+\begin{center}
+\includegraphics[bb=0 0 658 446,scale=0.6]{localdec-scheme}
+
+\includegraphics[bb=0 0 718 403,scale=0.6]{localdec-oop}
+\end{center}
+
+%%%%%%%%%%%
+%% Slide 12
+%%%%%%%%%%%
+%\transp{Granularidade da RoI}
+%\begin{center}
+%\includegraphics[type=eps,ext=.eps,bb=53 201 550 588,scale=0.8]%
+%	{all-granularity}
+%\end{center}
+
+%%%%%%%%%%%
+%% Slide 08
+%%%%%%%%%%%
+\rottransp{Elétron}
+\begin{center}
+\includegraphics[bb=0 0 567 567,scale=0.7]{typical-electron}
+\end{center}
+
+%%%%%%%%%%%
+%% Slide 09
+%%%%%%%%%%%
+\rottransp{Jato (fácil)}
+\begin{center}
+\includegraphics[bb=0 0 567 567,scale=0.7]{typical-jet}
+\end{center}
+
+%%%%%%%%%%%
+%% Slide 10
+%%%%%%%%%%%
+\rottransp{Jato (difícil)}
+\begin{center}
+\includegraphics[bb=0 0 567 567,scale=0.7]{ejet}
+\end{center}
+
+%%%%%%%%%%%
+%% Slide 11
+%%%%%%%%%%%
+\newcommand{\etem}{E$^{\text{e.m.}}_{T_{3\times7}}$}
+\newcommand{\ethad}{E$^{\text{HAD}}_{T_{0,2\times0,2}}$}
+\newcommand{\rshape}{R$^{\text{shape}}_{\eta}$}
+\newcommand{\rstrip}{R$^{\text{strip}}_{e.m._1}$}
+\newcommand{\ep}{$\eta\times\phi$}
+\rottransp{Variáveis Clássicas}
+\etem - Energia na seção e.m.
+
+\ethad - Energia na seção hadrônica
+
+\rshape - Largura da cascata
+
+\rstrip - Picos na e.m. 1
+\begin{center}
+\includegraphics[bb=50 198 551 589,scale=0.9]{view2d}
+\end{center}
+
+%%%%%%%%%%%
+%% Slide 12
+%%%%%%%%%%%
+\rottransp{Compactação usando Anéis}
+\begin{center}
+\includegraphics[bb=0 0 410 195]{cone}
+\includegraphics[bb=0 0 624 651,scale=0.5]{rings}
+\end{center}
+
+%%%%%%%%%%%
+%% Slide 13
+%%%%%%%%%%%
+\rottransp{Anéis Utilizados}
+\begin{center}
+\begin{tabular}{>{\bfseries}l r}
+Camada & Número de Anéis \\ \hline
+Pré-irradiador & 6 \\
+1\eira\ camada e.m. & 33 \\
+2\eira\ camada e.m. & 10 \\
+1\eira\ camada Hadrônica & 3 \\
+2\eira\ camada Hadrônica & 3 \\
+3\eira\ camada Hadrônica & 3 \\ \hline
+\end{tabular}
+
+\includegraphics[bb=76 213 553 600,scale=0.8]{lastring}
+\end{center}
+
+%%%%%%%%%%%
+%% Slide 14
+%%%%%%%%%%%
+%\rottransp{Discriminador linear}
+%\begin{center}
+%\includegraphics[bb=61 196 546 600,scale=0.65]%
+%	{mselinear}
+
+%\includegraphics[bb=61 201 549 600,scale=0.65]%
+%	{lineareff}
+%\end{center}
+
+%%%%%%%%%%%
+%% Slide 14
+%%%%%%%%%%%
+\newcommand{\vez}{$\times$}
+\rottransp{Discriminador por análise combinatória}
+\begin{center}
+\begin{tabular}{|c|l|l|} \hline
+Etapa & Configuração 1 & Configuração 2 \\ \hline
+1     & \etem\vez\ethad    & \rstrip\vez\rshape \\
+2     & \etem\vez\rshape   & \rstrip\vez\ethad \\
+3     & \etem\vez\rstrip   & \rstrip\vez\etem \\
+4     & \ethad\vez\rshape  & \rshape\vez\ethad \\
+5     & \ethad\vez\rstrip  & \rshape\vez\etem \\
+6     & \rshape\vez\rstrip & \ethad\vez\etem \\ \hline
+\end{tabular}
+\end{center}
+
+%%%%%%%%%%%
+%% Slide 15
+%%%%%%%%%%%
+\rottransp{Rede Neuronal}
+\small
+\begin{itemize}
+\item Topologia: 4-4-1
+\item Ativação: tanh()
+\item Treinamento: retropropagação de erros
+\item Normalização: somente \etem e \ethad (-$\mu$, /$\sigma$)
+\item Critério de Parada:
+\begin{displaymath}
+\text{SP} = (\text{ef}_{classe_1} + \text{ef}_{classe_2}) \times
+(\text{ef}_{classe_1} \times \text{ef}_{classe_2})
+\end{displaymath}
+
+\begin{center}
+\includegraphics[bb=61 196 546 600,scale=0.75]{evolution-eg}
+\end{center}
+\end{itemize}
+
+%%%%%%%%%%%
+%% Slide 16
+%%%%%%%%%%%
+\transp{Resultados}
+\normalsize
+\begin{center}
+\includegraphics[bb=56 201 549 600,scale=0.8]{efficiency-3}
+\end{center}
+
+%%%%%%%%%%%
+%% Slide 17
+%%%%%%%%%%%
+\rottransp{Rede Neuronal}
+\small
+\begin{itemize}
+\item Topologia: 58-5-1
+\item Ativação: tanh()
+\item Treinamento: retropropagação de erros
+\item Normalização: total da RoI, total da seção ou total na camada
+\item Critério de Parada: SP
+\begin{center}
+\includegraphics[bb=56 201 549 600,scale=0.8]{efficiency-17}
+\end{center}
+\end{itemize}
+
+%%%%%%%%%%%
+%% Slide 18
+%%%%%%%%%%%
+\rottransp{Relevância}
+\normalsize
+\begin{center}
+Relevância para o teste 20 (Variáveis Clássicas)\\
+\includegraphics[bb=70 201 550 583,scale=0.55]{4neural-relevance-20}
+
+Relevância para diferentes normalizações (58 anéis)\\
+\includegraphics[bb=64 201 550 589,scale=0.55]{relevance}
+\end{center}
+
+%%%%%%%%%%%
+%% Slide 19
+%%%%%%%%%%%
+\rottransp{Re-treinamento...}
+\begin{center}
+... usando 3 variáveis clássicas\\
+\includegraphics[bb=61 201 549 600,scale=0.55]{class-efficiency-cut-34}
+
+... usando 20 anéis\\
+\includegraphics[bb=61 201 549 600,scale=0.55]{efficiency-cut-17-7}
+\end{center}
+
+%%%%%%%%%%%
+%% Slide 20
+%%%%%%%%%%%
+\rottransp{Compactando ainda mais?}
+\begin{center}
+%\includegraphics[bb=64 201 553 589,scale=0.65]{relevance-cut-17-7}
+
+\includegraphics[bb=56 201 543 600, scale=0.65, width=\textwidth]{combined}
+\end{center}
+
+%%%%%%%%%%%
+%% Slide 21
+%%%%%%%%%%%
+\rottransp{Implementação}
+Pré-processamento
+\begin{enumerate}
+\item Aquisição - Recolhimento dos dados e construção das imagens (decodif.)
+\item Supressão - Eliminação de regiões não desejáveis
+\item Verificação - Checa a integridade dos dados
+\item Pré-processamento específico - Formanção das somas em anel
+
+\begin{center}
+\includegraphics[bb=21 249 466 600,scale=0.6]{time-slice}
+\color{red}{13 ms} 
+\end{center}
+
+\end{enumerate}
+
+%%%%%%%%%%%
+%% Slide 24
+%%%%%%%%%%%
+%\rottransp{acuidade da \texttt{tanh()}}
+%\begin{center}
+%\includegraphics[bb=59 201 543 600,scale=0.65]{error-histo}
+
+%\includegraphics[bb=56 201 549 600,scale=0.65]{scatter}
+%\end{center}
+
+%%%%%%%%%%%
+%% Slide 22
+%%%%%%%%%%%
+\rottransp{ADSP 21062}
+\begin{center}
+\includegraphics[bb=0 0 630 487,scale=0.7,width=\textwidth]{sharc-small}
+\end{center}
+
+%%%%%%%%%%%
+%% Slide 23
+%%%%%%%%%%%
+\rottransp{Aplicação}
+\begin{center}
+\includegraphics[bb=0 0 506 615,scale=0.8]{preproc}
+\end{center}
+
+%%%%%%%%%%%
+%% Slide 24
+%%%%%%%%%%%
+\rottransp{Resultados}
+\begin{center}
+\includegraphics[bb=59 196 546 600,scale=0.6]{dspout}
+
+\includegraphics[bb=64 196 550 600,scale=0.6]{dsptime}
+\end{center}
+
+%%%%%%%%%%%
+%% Slide 25
+%%%%%%%%%%%
+\rottransp{Conclusões}
+\small
+\begin{enumerate}
+\item Discriminação
+	\begin{enumerate} 
+	\item Discriminadores neuronais são mais eficientes mesmo usando as 4
+	variáveis clássicas;
+	\item As somas em anel mostraram ser uma forma de compactação que
+	aproveita melhor a granularidade do calorímetro;
+	\item Estudo de relevância permitiu a compactação dos dados de entrada
+	(5 anéis é ainda melhor que as 4 clássicas!);
+	\end{enumerate}
+
+\item Implementação
+	\begin{enumerate}
+	\item Esta foi a primeira vez que o sistema completo foi implementado;
+	\item Esta implementação está de acordo com os padrões do RefSoft;
+	\item A maior parte do tempo de processamento (87\%) é gasto com a
+	aquisição; 
+	\item A utilização de LUT's não é necessária;
+	\item A implementação em um ADSP 21062 @ 40 MHz torna o processamento
+	viável para atuar no L2, rodando mais rápido até que o sistema de
+	discriminação clássico (13 $\longrightarrow$ 1 ms);
+	\item O discriminador neuronal é mais rápido e eficiente que o sistema
+	clássico (18 $\times$ 50 $\mu$s);
+	\end{enumerate}
+\end{enumerate}
+
+%%%%%%%%%%%
+%% Slide 26
+%%%%%%%%%%%
+\rottransp{Extensões}
+\normalsize
+\begin{enumerate}
+\item Inclusão dos dados da terceira camada e.m.;
+\item Número de anéis \eng{versus} tempo de processamento;
+\item Portar a aplicação para o \eng{Software} de Referência;
+\item Paralelização usando DSP's;
+\item Normalização híbrida;
+\item Inclusão de efeitos de empilhamento;
+\item Tratamento de dados faltantes.
+\end{enumerate}
+
+\end{document}
+
+

@@ -1,0 +1,668 @@
+%!PS-Adobe-3.0 EPSF-3.0
+%%Creator: MATLAB, The Mathworks, Inc.
+%%Title: lineareff.eps
+%%CreationDate: 04/02/ 1  21:02:09
+%%DocumentNeededFonts: Helvetica
+%%DocumentProcessColors: Cyan Magenta Yellow Black
+%%LanguageLevel: 2
+%%Pages: 1
+%%BoundingBox:    61   201   549   600
+%%EndComments
+
+%%BeginProlog
+
+% MathWorks dictionary
+/MathWorks 160 dict begin
+
+% definition operators
+/bdef {bind def} bind def
+/ldef {load def} bind def
+/xdef {exch def} bdef
+/xstore {exch store} bdef
+
+% operator abbreviations
+/c  /clip ldef
+/cc /concat ldef
+/cp /closepath ldef
+/gr /grestore ldef
+/gs /gsave ldef
+/mt /moveto ldef
+/np /newpath ldef
+/cm /currentmatrix ldef
+/sm /setmatrix ldef
+/rc {rectclip} bdef
+/rf {rectfill} bdef
+/rm /rmoveto ldef
+/rl /rlineto ldef
+/s /show ldef
+/sc {setcmykcolor} bdef
+/sr /setrgbcolor ldef
+/sg /setgray ldef
+/w /setlinewidth ldef
+/j /setlinejoin ldef
+/cap /setlinecap ldef
+
+% page state control
+/pgsv () def
+/bpage {/pgsv save def} bdef
+/epage {pgsv restore} bdef
+/bplot /gsave ldef
+/eplot {stroke grestore} bdef
+
+% orientation switch
+/portraitMode 	0 def
+/landscapeMode 	1 def
+
+% coordinate system mappings
+/dpi2point 0 def
+
+% font control
+/FontSize 0 def
+/FMS {
+	/FontSize xstore		%save size off stack
+	findfont
+	[FontSize 0 0 FontSize neg 0 0]
+	makefont
+	setfont
+	}bdef
+
+/reencode {
+exch dup where
+{pop load} {pop StandardEncoding} ifelse
+exch
+dup 3 1 roll
+findfont dup length dict begin
+  { 1 index /FID ne {def}{pop pop} ifelse } forall
+  /Encoding exch def
+  currentdict
+end
+definefont pop
+} bdef
+
+/isroman {
+findfont /CharStrings get
+/Agrave known
+} bdef
+
+/FMSR {
+3 1 roll 1 index
+dup isroman
+{reencode} {pop pop} ifelse
+exch FMS
+} bdef
+
+/csm {
+	1 dpi2point div -1 dpi2point div scale
+	neg translate
+	landscapeMode eq {90 rotate} if
+	} bdef
+
+% line types: solid, dotted, dashed, dotdash
+/SO { [] 0 setdash } bdef
+/DO { [.5 dpi2point mul 4 dpi2point mul] 0 setdash } bdef
+/DA { [6 dpi2point mul] 0 setdash } bdef
+/DD { [.5 dpi2point mul 4 dpi2point mul 6 dpi2point mul 4 dpi2point mul] 0 setdash } bdef
+
+% macros for lines and objects
+/L {
+	lineto
+	stroke
+	} bdef
+/MP {
+	3 1 roll moveto
+	1 sub {rlineto} repeat
+	} bdef
+/AP {
+	{rlineto} repeat
+	} bdef
+/PP {
+	closepath eofill
+	} bdef
+/DP {
+	closepath stroke
+	} bdef
+/MR {
+	4 -2 roll moveto
+	dup  0 exch rlineto
+	exch 0 rlineto
+	neg  0 exch rlineto
+	closepath
+	} bdef
+/FR {
+	MR stroke
+	} bdef
+/PR {
+	MR fill
+	} bdef
+/L1i {
+	{ currentfile picstr readhexstring pop } image
+	} bdef
+
+/tMatrix matrix def
+/MakeOval {
+	newpath
+	tMatrix currentmatrix pop
+	translate scale
+	0 0 1 0 360 arc
+	tMatrix setmatrix
+	} bdef
+/FO {
+	MakeOval
+	stroke
+	} bdef
+/PO {
+	MakeOval
+	fill
+	} bdef
+
+/PD {
+	currentlinecap 1 setlinecap 3 1 roll 2 copy moveto lineto stroke setlinecap
+	} bdef
+
+/FA {
+	newpath
+	tMatrix currentmatrix pop
+	translate scale
+	0 0 1 5 -2 roll arc
+	tMatrix setmatrix
+	stroke
+	} bdef
+/PA {
+	newpath
+	tMatrix currentmatrix pop
+	translate 0 0 moveto scale
+	0 0 1 5 -2 roll arc
+	closepath
+	tMatrix setmatrix
+	fill
+	} bdef
+
+/FAn {
+	newpath
+	tMatrix currentmatrix pop
+	translate scale
+	0 0 1 5 -2 roll arcn
+	tMatrix setmatrix
+	stroke
+	} bdef
+/PAn {
+	newpath
+	tMatrix currentmatrix pop
+	translate 0 0 moveto scale
+	0 0 1 5 -2 roll arcn
+	closepath
+	tMatrix setmatrix
+	fill
+	} bdef
+
+/MRR {
+	/vradius xdef
+	/hradius xdef
+	/lry xdef
+	/lrx xdef
+	/uly xdef
+	/ulx xdef
+	newpath
+	tMatrix currentmatrix pop
+	ulx hradius add uly vradius add translate
+	hradius vradius scale
+	0 0 1 180 270 arc 
+	tMatrix setmatrix
+	lrx hradius sub uly vradius add translate
+	hradius vradius scale
+	0 0 1 270 360 arc
+	tMatrix setmatrix
+	lrx hradius sub lry vradius sub translate
+	hradius vradius scale
+	0 0 1 0 90 arc
+	tMatrix setmatrix
+	ulx hradius add lry vradius sub translate
+	hradius vradius scale
+	0 0 1 90 180 arc
+	tMatrix setmatrix
+	closepath
+	} bdef
+/FRR {
+	MRR stroke } bdef
+/PRR {
+	MRR fill } bdef
+
+/MlrRR {
+	/lry xdef
+	/lrx xdef
+	/uly xdef
+	/ulx xdef
+	/rad lry uly sub 2 div def
+	newpath
+	tMatrix currentmatrix pop
+	ulx rad add uly rad add translate
+	rad rad scale
+	0 0 1 90 270 arc
+	tMatrix setmatrix
+	lrx rad sub lry rad sub translate
+	rad rad scale
+	0 0 1 270 90 arc
+	tMatrix setmatrix
+	closepath
+	} bdef
+/FlrRR {
+	MlrRR stroke } bdef
+/PlrRR {
+	MlrRR fill } bdef
+
+/MtbRR {
+	/lry xdef
+	/lrx xdef
+	/uly xdef
+	/ulx xdef
+	/rad lrx ulx sub 2 div def
+	newpath
+	tMatrix currentmatrix pop
+	ulx rad add uly rad add translate
+	rad rad scale
+	0 0 1 180 360 arc
+	tMatrix setmatrix
+	lrx rad sub lry rad sub translate
+	rad rad scale
+	0 0 1 0 180 arc
+	tMatrix setmatrix
+	closepath
+	} bdef
+/FtbRR {
+	MtbRR stroke } bdef
+/PtbRR {
+	MtbRR fill } bdef
+
+currentdict end def
+%%EndProlog
+
+%%BeginSetup
+MathWorks begin
+
+0 cap
+
+end
+%%EndSetup
+
+%%Page: 1 1
+%%BeginPageSetup
+%%PageBoundingBox:    61   201   549   600
+MathWorks begin
+bpage
+%%EndPageSetup
+
+%%BeginObject: graph1 1
+bplot
+
+/dpi2point 12 def
+portraitMode 0216 7344 csm
+
+  527   134  5847  4796 rc
+88 dict begin %Colortable dictionary
+/c0 { 0 0 0 sr} bdef
+/c1 { 1 1 1 sr} bdef
+/c2 { 1 0 0 sr} bdef
+/c3 { 0 1 0 sr} bdef
+/c4 { 0 0 1 sr} bdef
+/c5 { 1 1 0 sr} bdef
+/c6 { 1 0 1 sr} bdef
+/c7 { 0 1 1 sr} bdef
+1 j
+1 sg
+   0    0 6918 5185 rf
+6 w
+0 4224 5359 0 0 -4224 899 4612 4 MP
+PP
+-5359 0 0 4224 5359 0 0 -4224 899 4612 5 MP stroke
+4 w
+DO
+0 sg
+ 899 4612 mt  899  388 L
+ 899  388 mt  899  388 L
+1971 4612 mt 1971  388 L
+1971  388 mt 1971  388 L
+3043 4612 mt 3043  388 L
+3043  388 mt 3043  388 L
+4114 4612 mt 4114  388 L
+4114  388 mt 4114  388 L
+5186 4612 mt 5186  388 L
+5186  388 mt 5186  388 L
+6258 4612 mt 6258  388 L
+6258  388 mt 6258  388 L
+ 899 4612 mt 6258 4612 L
+6258 4612 mt 6258 4612 L
+ 899 4190 mt 6258 4190 L
+6258 4190 mt 6258 4190 L
+ 899 3767 mt 6258 3767 L
+6258 3767 mt 6258 3767 L
+ 899 3345 mt 6258 3345 L
+6258 3345 mt 6258 3345 L
+ 899 2922 mt 6258 2922 L
+6258 2922 mt 6258 2922 L
+ 899 2500 mt 6258 2500 L
+6258 2500 mt 6258 2500 L
+ 899 2078 mt 6258 2078 L
+6258 2078 mt 6258 2078 L
+ 899 1655 mt 6258 1655 L
+6258 1655 mt 6258 1655 L
+ 899 1233 mt 6258 1233 L
+6258 1233 mt 6258 1233 L
+ 899  810 mt 6258  810 L
+6258  810 mt 6258  810 L
+ 899  388 mt 6258  388 L
+6258  388 mt 6258  388 L
+SO
+6 w
+ 899 4612 mt 6258 4612 L
+ 899  388 mt 6258  388 L
+ 899 4612 mt  899  388 L
+6258 4612 mt 6258  388 L
+ 899 4612 mt 6258 4612 L
+ 899 4612 mt  899  388 L
+ 899 4612 mt  899 4558 L
+ 899  388 mt  899  442 L
+%%IncludeResource: font Helvetica
+/Helvetica /ISOLatin1Encoding 120 FMSR
+
+ 866 4758 mt 
+(0) s
+1971 4612 mt 1971 4558 L
+1971  388 mt 1971  442 L
+1938 4758 mt 
+(5) s
+3043 4612 mt 3043 4558 L
+3043  388 mt 3043  442 L
+2977 4758 mt 
+(10) s
+4114 4612 mt 4114 4558 L
+4114  388 mt 4114  442 L
+4048 4758 mt 
+(15) s
+5186 4612 mt 5186 4558 L
+5186  388 mt 5186  442 L
+5120 4758 mt 
+(20) s
+6258 4612 mt 6258 4558 L
+6258  388 mt 6258  442 L
+6192 4758 mt 
+(25) s
+ 899 4612 mt  953 4612 L
+6258 4612 mt 6204 4612 L
+ 798 4656 mt 
+(0) s
+ 899 4190 mt  953 4190 L
+6258 4190 mt 6204 4190 L
+ 698 4234 mt 
+(0.1) s
+ 899 3767 mt  953 3767 L
+6258 3767 mt 6204 3767 L
+ 698 3811 mt 
+(0.2) s
+ 899 3345 mt  953 3345 L
+6258 3345 mt 6204 3345 L
+ 698 3389 mt 
+(0.3) s
+ 899 2922 mt  953 2922 L
+6258 2922 mt 6204 2922 L
+ 698 2966 mt 
+(0.4) s
+ 899 2500 mt  953 2500 L
+6258 2500 mt 6204 2500 L
+ 698 2544 mt 
+(0.5) s
+ 899 2078 mt  953 2078 L
+6258 2078 mt 6204 2078 L
+ 698 2122 mt 
+(0.6) s
+ 899 1655 mt  953 1655 L
+6258 1655 mt 6204 1655 L
+ 698 1699 mt 
+(0.7) s
+ 899 1233 mt  953 1233 L
+6258 1233 mt 6204 1233 L
+ 698 1277 mt 
+(0.8) s
+ 899  810 mt  953  810 L
+6258  810 mt 6204  810 L
+ 698  854 mt 
+(0.9) s
+ 899  388 mt  953  388 L
+6258  388 mt 6204  388 L
+ 798  432 mt 
+(1) s
+ 899 4612 mt 6258 4612 L
+ 899  388 mt 6258  388 L
+ 899 4612 mt  899  388 L
+6258 4612 mt 6258  388 L
+gs 899 388 5360 4225 rc
+/c8 { 0.000000 0.000000 1.000000 sr} bdef
+c8
+-3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 32 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 -3 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 32 0 0 -3 31 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 64 0 0 0 0 0 0 0 0 0 0 
+0 32 0 0 0 0 0 0 0 31 0 0 -3 0 -3 32 
+-3 0 0 0 0 32 0 0 0 0 0 32 0 0 -9 0 
+0 0 0 0 -3 0 0 0 0 0 0 0 -3 31 -2 0 
+0 32 0 0 0 0 0 0 0 0 0 0 0 32 0 0 
+-3 0 0 0 -3 0 -9 32 -3 0 -3 31 -3 0 0 0 
+0 0 0 0 -3 0 -3 0 -6 0 -3 0 0 0 0 32 
+0 64 -3 0 0 0 0 0 -6 0 -3 31 0 32 -3 0 
+0 0 0 0 0 32 0 0 -3 63 0 0 -6 32 -3 0 
+-3 0 -5 32 0 32 -6 0 0 0 -6 32 -6 31 0 32 
+-12 32 -6 32 -3 0 0 0 -3 31 0 32 -9 0 0 0 
+0 32 0 32 -3 31 -3 64 -6 0 -5 0 0 32 -6 0 
+-9 63 -9 64 -6 0 0 0 -6 31 -3 64 -3 0 -6 32 
+-6 31 0 0 -3 0 0 0 -9 0 0 0 -8 32 0 64 
+-9 95 -3 0 -3 0 -9 64 -3 31 -3 0 -9 32 0 64 
+-3 31 -6 64 -3 32 -6 0 0 31 -5 32 0 64 0 31 
+-3 0 0 0 -3 0 -3 0 -3 32 0 0 -3 0 -3 0 
+-18 0 -21 32 -9 32 -11 0 -3 0 -12 0 -3 0 -6 0 
+0 0 -3 0 0 31 -9 0 -9 32 -12 32 -8 63 -3 0 
+-3 32 -12 0 -3 0 0 32 -6 0 -3 0 -9 0 -9 0 
+-12 32 -6 0 -8 0 -3 0 -3 0 -6 63 -15 0 -15 32 
+0 0 -9 32 0 32 -6 31 -3 0 0 0 -5 0 -12 0 
+0 32 -6 95 -6 32 -6 0 -3 32 -6 0 -15 0 -3 0 
+-9 0 -14 0 -3 0 -3 32 -6 0 -12 0 -6 0 -6 0 
+-6 31 -9 0 -3 0 -3 0 -2 0 -3 0 0 32 -3 0 
+0 0 -6 64 0 0 -6 31 -9 0 0 32 -3 0 0 0 
+0 64 -6 0 -3 0 -15 0 -12 0 -11 0 0 0 -12 0 
+-3 0 -3 0 -6 0 -3 0 -3 0 0 0 -6 0 -3 0 
+-3 31 -6 0 -6 0 0 32 -11 0 -6 0 -3 0 0 0 
+-3 0 -6 0 -3 0 -3 0 0 0 0 0 0 0 0 0 
+0 0 0 0 -6 0 1804 1341 300 MP stroke
+-6 0 -3 0 -9 32 0 0 -3 0 -3 0 -3 0 -3 0 
+-8 0 0 32 0 0 -9 0 0 0 -6 0 -9 0 0 0 
+-3 0 -3 0 -3 0 -3 0 -15 31 -9 0 0 0 -6 0 
+-2 0 -6 32 -6 0 -12 0 -3 0 -6 0 -9 0 0 0 
+-6 0 -3 0 -9 0 -3 0 0 0 -3 32 0 0 -8 0 
+-9 0 0 0 -6 0 -3 64 -6 0 -6 0 -6 0 0 0 
+-6 0 -3 0 -3 31 0 0 0 0 0 0 -3 0 0 0 
+-6 0 -3 0 -3 0 -2 0 -3 0 0 0 0 0 -6 0 
+-3 0 -6 0 0 0 -15 0 -6 0 -3 0 0 0 -3 0 
+-3 0 0 0 -3 0 -15 0 -2 0 -3 0 0 0 0 0 
+-6 0 0 0 -3 0 -3 0 -9 0 -3 0 -6 0 -3 0 
+0 0 -9 0 -6 0 -3 0 -3 0 0 0 -9 0 0 0 
+-5 0 0 0 -3 0 0 0 0 32 -3 0 -6 0 -3 0 
+-9 0 -6 0 -3 0 -3 0 0 0 -3 0 -9 0 -3 0 
+0 0 -3 0 -9 0 -3 0 -2 0 0 0 -9 0 0 0 
+-3 0 0 0 0 0 -3 0 -6 0 0 0 0 0 -3 0 
+-6 0 0 0 -6 0 0 0 -3 0 -3 0 0 0 -3 32 
+-9 0 -6 0 0 0 -6 0 -5 0 -9 0 -3 0 -9 0 
+0 0 -3 0 -6 0 -3 0 -3 0 -12 0 0 0 -3 0 
+0 0 0 0 0 0 0 0 -3 0 -3 0 0 0 -9 0 
+0 0 0 0 -2 0 -9 0 0 0 -3 0 -3 0 0 0 
+0 0 0 0 -12 0 0 0 -9 32 -6 0 0 0 -6 0 
+-3 0 -3 0 0 0 -3 0 -3 0 -3 0 0 0 -6 31 
+0 0 -2 0 -3 0 -3 0 -9 32 0 0 -9 0 0 0 
+0 0 -3 0 -3 0 -3 0 -3 0 0 0 -3 0 -6 0 
+-6 0 0 0 -6 0 -3 0 0 0 0 0 0 0 0 0 
+-3 0 -3 0 -3 0 0 0 -2 0 0 0 -3 0 -3 0 
+-3 0 -3 0 -3 0 0 0 -3 0 -6 0 -3 0 -3 0 
+0 0 0 0 0 0 0 0 0 0 0 0 -3 0 -6 0 
+-3 0 -3 0 -6 0 0 0 -3 0 0 0 -3 0 -3 0 
+-3 0 -5 0 -3 0 -3 0 -6 0 0 0 0 0 -3 0 
+-3 0 0 0 -3 0 0 0 0 0 -3 0 0 0 -6 0 
+-12 0 -6 0 0 0 0 0 -3 0 0 0 0 0 -3 0 
+-6 0 0 0 0 0 -6 0 0 0 0 0 -8 0 -3 0 
+0 0 -6 0 -3 0 0 0 0 0 -3 0 0 0 -6 0 
+-3 0 0 0 0 0 -3 0 -3 0 -3 0 0 0 -3 0 
+-9 0 -6 0 -6 0 -3 0 0 0 -8 0 -3 0 -3 0 
+0 0 0 0 -6 0 2759 928 300 MP stroke
+-6 0 -3 0 -6 0 -6 0 -6 0 0 0 -6 0 0 0 
+-3 0 -6 0 -3 0 0 0 -3 0 -3 0 -3 0 -14 0 
+0 0 -6 0 0 0 -3 0 0 0 -6 0 0 0 0 0 
+-3 0 0 0 0 0 0 0 -3 0 0 0 -3 0 -3 0 
+0 0 -3 0 -3 0 -6 0 -9 0 -3 0 -3 0 -2 0 
+-3 0 -9 0 -9 32 0 0 0 0 -3 0 -6 0 0 0 
+0 0 -3 0 0 0 -3 0 -3 0 -3 0 -3 0 0 0 
+0 0 -9 0 -6 0 -3 0 0 0 -3 0 0 0 -3 0 
+-2 0 -6 0 -6 0 -3 0 -3 0 0 0 0 0 0 0 
+-3 0 0 0 -3 0 -6 0 -6 0 -6 0 0 0 -3 0 
+-3 0 0 0 -6 0 -6 0 -6 0 0 0 -8 0 -3 0 
+0 0 -3 0 -3 0 -3 0 -3 0 -9 0 -3 0 -3 0 
+-3 0 -3 0 -12 0 0 0 0 0 0 0 0 0 -3 0 
+-3 0 -3 32 0 31 -6 0 -5 0 0 0 -6 0 -3 0 
+0 0 -6 0 -6 0 -3 0 -3 0 -9 0 -3 0 0 0 
+-3 0 -6 0 0 32 -3 0 -3 0 -3 0 -6 0 -2 0 
+0 0 0 0 -3 0 0 0 -3 0 -3 0 -3 0 -9 0 
+-3 0 -6 0 -3 0 -3 0 -3 0 0 0 0 0 -6 0 
+0 0 0 0 0 0 -6 0 -3 0 -3 0 -3 0 0 0 
+0 0 0 0 -3 0 0 0 -3 0 0 0 0 0 0 0 
+-5 0 -3 0 -9 0 -3 0 0 0 -6 0 0 0 -3 0 
+-3 0 0 0 0 0 -3 0 -3 0 -3 0 0 0 -6 0 
+-6 0 -3 0 -3 0 0 0 0 0 -3 0 0 0 -3 0 
+0 0 0 32 -6 0 -2 0 -3 0 -9 0 0 0 0 0 
+-3 0 0 0 -3 0 -3 0 -6 0 -3 32 0 0 0 0 
+-6 0 -6 0 -3 0 0 0 0 0 0 0 -3 0 -6 0 
+-3 0 -6 0 -3 0 0 0 -3 0 0 0 -5 31 0 0 
+-3 0 -3 0 -6 0 -6 0 -6 0 -3 0 -9 0 -3 0 
+-3 0 -9 0 -3 0 0 0 0 0 -3 0 0 0 -6 0 
+-2 0 0 0 -3 0 0 0 -3 0 -3 0 0 0 0 0 
+-6 0 0 0 -3 0 0 0 0 0 0 0 -6 0 -6 0 
+-3 0 0 0 0 0 -6 0 -3 0 0 0 0 0 0 0 
+-3 0 -6 0 -3 0 0 0 -3 0 -3 0 -6 0 -8 0 
+-12 0 0 0 0 0 -3 0 0 0 -6 0 -3 0 -6 0 
+-9 0 0 0 0 0 -3 32 -3 0 -3 0 0 0 0 0 
+-6 0 -3 0 -6 0 -3 32 0 0 -2 0 -9 0 -3 32 
+0 0 0 0 0 0 0 0 0 0 -3 0 0 0 -6 0 
+0 0 -3 0 0 0 3605 610 300 MP stroke
+-3 0 -3 0 0 0 -3 0 -6 0 -3 0 0 0 -3 0 
+-6 0 -6 0 -9 0 -2 0 0 0 -9 0 -3 0 -3 0 
+0 0 0 0 -3 0 0 0 0 0 0 0 0 0 0 0 
+-6 0 -3 0 0 0 0 0 0 0 0 0 0 0 -6 0 
+-3 0 0 31 -3 0 -6 0 -3 0 -9 0 -3 0 0 0 
+-6 0 -5 0 -3 0 -3 0 0 0 -3 0 -3 0 0 0 
+0 0 -3 0 -9 0 0 0 -3 0 0 0 -9 0 0 0 
+0 0 -3 0 -3 0 0 0 0 0 -6 0 -3 0 -3 0 
+-3 0 -3 0 -11 0 -9 0 -3 0 -3 0 0 0 -6 0 
+-9 0 -3 0 0 0 -3 0 -3 0 0 0 -9 0 -3 0 
+-3 0 -3 0 -3 0 -8 0 0 0 0 0 -3 0 -3 0 
+-6 0 -6 0 0 0 0 0 0 0 0 0 0 0 -6 0 
+0 0 -6 0 -3 0 -6 0 0 0 0 0 -3 0 -3 0 
+0 0 0 0 0 0 0 0 0 0 0 0 -6 0 -6 0 
+-9 0 0 0 -5 0 -3 0 -3 0 -3 0 -3 0 0 0 
+-3 0 -3 0 0 0 -3 0 -3 0 -3 0 -3 0 0 0 
+0 0 -3 0 0 0 0 0 0 0 -3 0 0 0 -6 0 
+-3 0 0 0 -3 0 0 0 0 0 -6 0 -3 0 0 0 
+-9 0 -2 0 -6 0 -6 0 0 0 0 0 -3 0 -3 0 
+-3 0 0 0 -6 0 -3 0 0 0 -12 0 -6 0 -3 0 
+0 0 -6 0 -3 0 0 0 -3 0 -3 0 -2 0 0 0 
+-3 0 -3 0 0 0 -3 0 -12 0 -6 0 0 0 0 0 
+-9 0 0 0 -6 0 -9 0 -3 0 -3 0 -3 0 -3 0 
+-6 0 -2 0 -3 0 -6 0 0 0 0 0 -3 0 -3 0 
+-6 0 -6 0 -3 0 -6 0 -6 0 0 0 -3 0 0 0 
+-3 0 -9 0 0 0 0 32 -9 0 0 0 -2 0 -6 0 
+-3 0 -9 0 -3 0 -12 0 -3 0 0 0 0 0 -3 0 
+0 0 0 0 0 32 0 0 -3 0 0 0 -3 0 -6 0 
+-3 0 -6 0 0 0 -6 0 -8 0 -3 0 -3 0 -9 0 
+-6 0 -3 0 0 0 -3 0 0 0 -6 0 0 0 0 0 
+0 0 -3 0 0 0 0 0 -6 0 0 0 0 0 0 0 
+-3 0 -3 0 0 0 0 0 -3 0 -6 0 -6 0 -2 0 
+-3 0 -3 0 -3 0 0 0 -6 0 -9 0 -12 0 -3 0 
+-6 0 -6 0 -6 32 0 0 -6 0 -6 0 -2 0 -3 0 
+-3 0 -6 0 -3 0 -3 0 -3 0 -6 31 0 0 -6 0 
+-6 0 0 0 0 0 0 0 -3 0 -3 0 -6 0 0 0 
+-3 0 -3 0 0 0 -3 0 -3 0 -3 0 0 0 -2 0 
+-3 0 0 0 -6 0 4492 452 300 MP stroke
+-6 0 -3 0 0 0 -9 0 0 0 -3 0 -6 0 -3 0 
+-6 0 0 0 -3 0 -3 0 0 0 -3 0 -9 0 -6 0 
+-2 0 -3 0 0 0 -3 0 -6 0 0 0 -3 0 0 0 
+0 32 0 0 -6 0 0 0 -6 0 0 0 -6 0 -6 0 
+0 0 -9 0 -3 0 0 32 -3 0 0 0 0 0 -3 0 
+-3 0 -3 0 -5 0 0 0 0 0 -3 0 -9 0 0 0 
+0 0 -3 0 -3 0 -3 0 -3 0 0 0 -3 0 0 0 
+-3 0 0 0 0 0 -6 0 0 0 0 0 0 0 -3 0 
+0 0 -3 0 -3 0 -3 0 -3 0 -3 0 -12 0 -5 0 
+0 0 0 0 -3 0 0 0 0 0 -6 0 0 0 -3 0 
+-3 0 0 0 0 0 0 0 -3 0 0 0 -6 0 0 0 
+0 0 -9 0 -6 0 -3 0 0 0 0 0 -3 0 -3 0 
+0 0 -9 0 0 0 0 0 0 0 0 0 -6 0 0 0 
+-3 0 0 0 -3 0 0 0 0 0 0 0 -2 0 0 0 
+0 0 0 0 0 0 0 0 -6 0 0 0 0 0 0 0 
+0 0 -6 0 0 0 -3 0 -6 0 0 0 0 0 0 0 
+-9 0 -3 0 0 0 -3 0 -3 0 -3 0 -3 0 -3 0 
+-3 0 0 0 0 0 0 0 0 0 0 0 -6 0 -3 0 
+-3 0 -5 0 0 0 -6 0 -3 0 0 0 -6 0 -3 0 
+0 0 0 0 0 0 -9 0 0 0 -3 0 -3 0 0 0 
+0 0 0 0 0 0 0 0 -3 0 0 0 -3 0 -9 0 
+-3 0 0 0 -6 0 0 0 -6 0 0 0 -6 0 0 0 
+-2 0 -6 0 -3 0 -3 0 -3 0 -3 0 0 0 0 0 
+0 0 -3 0 -3 0 -3 0 0 0 -6 0 -6 0 -3 0 
+0 0 -6 0 0 0 -6 0 -6 0 -3 0 0 0 0 0 
+-5 0 -3 0 0 0 0 0 0 0 -3 0 -3 0 -3 0 
+-3 0 -3 0 0 0 0 0 -3 0 -6 0 -3 0 0 0 
+0 0 -9 0 0 0 -6 0 0 0 -9 0 -9 0 0 0 
+-3 0 -3 0 0 0 0 0 -2 0 0 0 0 0 -3 0 
+0 0 0 0 -3 0 -6 0 -6 0 0 0 -6 0 -9 0 
+0 0 -3 0 0 0 -3 0 0 0 -6 0 -6 0 0 0 
+0 0 0 0 0 0 -3 0 -3 0 0 0 0 0 0 0 
+-3 0 -3 0 0 0 0 0 -3 0 0 0 -2 0 -3 0 
+0 0 0 0 -3 0 0 0 -3 0 0 0 -3 0 0 0 
+0 0 0 0 -3 0 -3 0 0 0 -3 0 -3 0 0 0 
+-3 0 -3 0 0 0 -3 0 0 0 -3 0 -3 0 -3 0 
+-3 0 -9 0 -3 0 -3 0 -3 0 0 0 0 0 -6 0 
+0 0 -2 0 -3 0 5184 388 300 MP stroke
+0 0 -3 0 0 0 0 0 0 0 0 0 -3 0 -3 0 
+0 0 0 0 0 0 0 0 0 0 -3 0 -3 0 0 0 
+0 0 -3 0 -3 0 0 0 -6 0 0 0 0 0 0 0 
+-3 0 -9 0 0 0 -3 0 0 0 0 0 -3 0 0 0 
+-3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+-3 0 -6 0 0 0 -3 0 -3 0 0 0 0 0 0 0 
+-2 0 0 0 0 0 0 0 -3 0 -3 0 -3 0 0 0 
+-3 0 0 0 -3 0 0 0 0 0 0 0 0 0 -3 0 
+-3 0 -6 0 0 0 -6 0 0 0 0 0 0 0 0 0 
+0 0 -6 0 0 0 0 0 0 0 -3 0 -6 0 -6 0 
+0 0 -3 0 -3 0 -3 0 -3 0 0 0 0 0 -3 0 
+-2 0 0 0 0 0 0 0 0 0 -3 0 -3 0 -3 0 
+-3 0 -3 0 0 0 -3 0 0 0 -3 0 -3 0 0 0 
+0 0 0 0 0 0 0 0 -6 0 0 0 -3 0 -3 0 
+0 0 0 0 -6 0 -3 0 -6 0 0 0 -3 0 5374 388 120 MP stroke
+
+gr 
+c8
+0 sg
+2193  293 mt 
+(Electron Efficiency as a function of Background Rate) s
+2887 4901 mt 
+(Jet Background rate \(kHz\)) s
+ 643 2991 mt  -90 rotate
+(Electron Efficiency) s
+90 rotate
+
+end
+
+eplot
+%%EndObject graph 1
+
+epage
+end
+
+showpage
+
+%%Trailer
+%%EOF
